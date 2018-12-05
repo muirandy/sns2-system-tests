@@ -7,10 +7,10 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, Produce
 import org.scalatest.{FunSpec, GivenWhenThen}
 
 import scala.collection.JavaConverters._
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class FirstSpec extends FunSpec with GivenWhenThen {
 
@@ -36,11 +36,12 @@ class FirstSpec extends FunSpec with GivenWhenThen {
       Given("A valid operator message")
 
       When("a valid operator message is received by SNS")
+      //      val future = {
       val producer = new KafkaProducer[String, String](props)
 
       var future = Future {
         val records = Seq()
-        val deadline = 60.seconds.fromNow
+        val deadline = 2.seconds.fromNow
 
         while (deadline.hasTimeLeft)
           records ++ consumer.poll(100).asScala
@@ -53,12 +54,20 @@ class FirstSpec extends FunSpec with GivenWhenThen {
 
       producer.flush()
       producer.close()
+//      future
+      //      }
 
       Then("SNS accepts the valid message")
-      future.onComplete {
-        case Success(records) => assert(records.length == 1)
+      Await.ready(future, 2.seconds)
+//      val rec = future.value.get
+//      assert(rec ===
+      future onComplete {
+        case Success(records) => {
+          assert(records.length === 1)
+        }
         case Failure(t) => fail(s"An error occured: ${t.getMessage}")
       }
     }
   }
+
 }
