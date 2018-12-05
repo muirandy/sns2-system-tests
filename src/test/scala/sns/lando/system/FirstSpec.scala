@@ -1,30 +1,64 @@
 package sns.lando.system
 
+import java.util.{Collections, Properties}
+
+import org.apache.kafka.clients.consumer.{ConsumerConfig, KafkaConsumer}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 import org.scalatest.{FunSpec, GivenWhenThen}
+
+import scala.collection.JavaConverters._
+import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class FirstSpec extends FunSpec with GivenWhenThen {
 
-  def listenToAcceptedMessages() = {
+  private val incomingTopic = "incoming.op.msgs"
+  private val KafkaDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
+  private val KafkaSserializer = "org.apache.kafka.common.serialization.StringSerializer"
 
-  }
+  private val props = new Properties()
+  props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092")
+  props.put("acks", "all")
+  props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaSserializer)
+  props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaSserializer)
+  props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaDeserializer)
+  props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaDeserializer)
+  props.put(ConsumerConfig.GROUP_ID_CONFIG, this.getClass.getName)
 
-  def writeValidOperatorMessageToSns() = {
+  val consumer = new KafkaConsumer[String, String](props)
+  consumer.subscribe(Collections.singletonList(incomingTopic))
 
-  }
-
-  def verifySnsHasAcceptedTheMessage() = {
-
-  }
 
   describe("SNS") {
     it("should accept valid operator messages") {
-      listenToAcceptedMessages()
+      Given("A valid operator message")
 
       When("a valid operator message is received by SNS")
-      writeValidOperatorMessageToSns()
+      val producer = new KafkaProducer[String, String](props)
+
+      var future = Future {
+        val records = Seq()
+        val deadline = 60.seconds.fromNow
+
+        while (deadline.hasTimeLeft)
+          records ++ consumer.poll(100).asScala
+
+        consumer.commitSync()
+        records
+      }
+
+      producer.send(new ProducerRecord(incomingTopic, "operatorMessage", "Hello Kafka!")).get()
+
+      producer.flush()
+      producer.close()
 
       Then("SNS accepts the valid message")
-      verifySnsHasAcceptedTheMessage()
+      future.onComplete {
+        case Success(records) => assert(records.length == 1)
+        case Failure(t) => fail(s"An error occured: ${t.getMessage}")
+      }
     }
   }
 }
