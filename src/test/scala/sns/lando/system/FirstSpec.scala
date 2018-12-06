@@ -1,5 +1,7 @@
 package sns.lando.system
 
+import java.lang.Thread.sleep
+import java.time.Duration
 import java.util.{Collections, Properties}
 
 import org.apache.kafka.clients.consumer.{ConsumerConfig, KafkaConsumer}
@@ -7,10 +9,7 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, Produce
 import org.scalatest.{FunSpec, GivenWhenThen}
 
 import scala.collection.JavaConverters._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
-import scala.util.{Failure, Success}
+
 
 class FirstSpec extends FunSpec with GivenWhenThen {
 
@@ -35,22 +34,24 @@ class FirstSpec extends FunSpec with GivenWhenThen {
     it("should accept valid operator messages") {
       Given("A valid operator message")
 
+      val messageValue = "Hello Kafka - UUID is: ${UUID.randomUUID().toString}"
+
       When("a valid operator message is received by SNS")
       //      val future = {
       val producer = new KafkaProducer[String, String](props)
 
-      var future = Future {
-        val records = Seq()
-        val deadline = 2.seconds.fromNow
+//      var future = Future {
+//        val records = Seq()
+//        val deadline = 2.seconds.fromNow
+//
+//        while (deadline.hasTimeLeft)
+//          records ++ consumer.poll(100).asScala
+//
+//        consumer.commitSync()
+//        records
+//      }
 
-        while (deadline.hasTimeLeft)
-          records ++ consumer.poll(100).asScala
-
-        consumer.commitSync()
-        records
-      }
-
-      producer.send(new ProducerRecord(incomingTopic, "operatorMessage", "Hello Kafka!")).get()
+      producer.send(new ProducerRecord(incomingTopic, "operatorMessage", messageValue)).get()
 
       producer.flush()
       producer.close()
@@ -58,15 +59,22 @@ class FirstSpec extends FunSpec with GivenWhenThen {
       //      }
 
       Then("SNS accepts the valid message")
-      Await.ready(future, 2.seconds)
+//      Await.ready(future, 2.seconds)
+      sleep(2000)
+      val duration = Duration.ofSeconds(1)
+      val recs = consumer.poll(duration).asScala
+      val last = recs.last
+      assert(last.value() === messageValue)
+
+//      assert(recs.count() == 99)
 //      val rec = future.value.get
 //      assert(rec ===
-      future onComplete {
-        case Success(records) => {
-          assert(records.length === 1)
-        }
-        case Failure(t) => fail(s"An error occured: ${t.getMessage}")
-      }
+//      future onComplete {
+//        case Success(records) => {
+//          assert(records.length === 1)
+//        }
+//        case Failure(t) => fail(s"An error occured: ${t.getMessage}")
+//      }
     }
   }
 
