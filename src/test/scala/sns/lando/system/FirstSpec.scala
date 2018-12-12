@@ -37,45 +37,19 @@ class FirstSpec extends FunSpec with GivenWhenThen {
       val messageValue = "Hello Kafka - UUID is: ${UUID.randomUUID().toString}"
 
       When("a valid operator message is received by SNS")
-      //      val future = {
       val producer = new KafkaProducer[String, String](props)
-
-//      var future = Future {
-//        val records = Seq()
-//        val deadline = 2.seconds.fromNow
-//
-//        while (deadline.hasTimeLeft)
-//          records ++ consumer.poll(100).asScala
-//
-//        consumer.commitSync()
-//        records
-//      }
 
       producer.send(new ProducerRecord(incomingTopic, "operatorMessage", messageValue)).get()
 
       producer.flush()
       producer.close()
-//      future
-      //      }
 
       Then("SNS accepts the valid message")
-//      Await.ready(future, 2.seconds)
       sleep(2000)
       val duration = Duration.ofSeconds(1)
       val recs = consumer.poll(duration).asScala
       val last = recs.last
       assert(last.value() === messageValue)
-
-//      assert(recs.count() == 99)
-//      val rec = future.value.get
-//      assert(rec ===
-//      future onComplete {
-//        case Success(records) => {
-//          assert(records.length === 1)
-//        }
-//        case Failure(t) => fail(s"An error occured: ${t.getMessage}")
-//      }
     }
   }
-
 }
