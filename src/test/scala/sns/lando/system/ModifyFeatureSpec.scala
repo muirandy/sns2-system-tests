@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 
 class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
 
-  private val operatorMessagesTopic = "incoming.op.msgs"
+  private val lluStreamMessagesTopic = "incoming.op.msgs"
   private val switchModificationTopic = "switch.modification.instructions"
   private val KafkaDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
   private val KafkaSerializer = "org.apache.kafka.common.serialization.StringSerializer"
@@ -42,18 +42,38 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
 
   describe("SNS") {
     it("should update switch (Knitware)") {
-      Given("A valid operator message")
-      val messageValue = "Hello Kafka - UUID is: ${UUID.randomUUID().toString}"
-      val uuid = UUID.randomUUID().toString
+      Given("A valid LLU-Stream Modify Features Message")
+      val messageValue =
+        """
+          |<?xml version="1.0" encoding="UTF-8"?>
+          |<transaction receivedDate="2018-11-15T10:29:07" operatorId="sky" operatorTransactionId="op_trans_id_095025_228" operatorIssuedDate="2011-06-01T09:51:12">
+          |  <instruction version="1" type="PlaceOrder">
+          |    <order>
+          |      <type>modify</type>
+          |      <operatorOrderId>SogeaVoipModify_YHUORO</operatorOrderId>
+          |      <operatorNotes>Test: notes</operatorNotes>
+          |      <orderId>33398605</orderId>
+          |    </order>
+          |    <modifyFeaturesInstruction serviceId="31642339" operatorOrderId="FttcModify_YHUORO" operatorNotes="Test: addThenRemoveStaticIpToAnFttcService">
+          |      <features>
+          |          <feature code="CallerDisplay"/>
+          |          <feature code="RingBack"/>
+          |          <feature code="ChooseToRefuse"/>
+          |      </features>
+          |    </modifyFeaturesInstruction>
+          |  </instruction>
+          |</transaction>
+        """.stripMargin
+      val messageUuid = UUID.randomUUID().toString
 
-      When("a valid operator message is received by SNS")
-      val operatorMessagesTopicProducer = new KafkaProducer[String, String](props)
-      operatorMessagesTopicProducer.send(new ProducerRecord(operatorMessagesTopic, uuid, messageValue)).get()
+      When("LLU-Stream writes a valid Modify Features Message")
+      val lluStreamMessagesTopicProducer = new KafkaProducer[String, String](props)
+      lluStreamMessagesTopicProducer.send(new ProducerRecord(lluStreamMessagesTopic, messageUuid, messageValue)).get()
 
-      operatorMessagesTopicProducer.flush()
-      operatorMessagesTopicProducer.close()
+      lluStreamMessagesTopicProducer.flush()
+      lluStreamMessagesTopicProducer.close()
 
-      Then("Knitware will receive an instruction")
+      Then("Knitware will receive an instruction to modify features")
       val consumer = new KafkaConsumer[String, String](props)
       consumer.subscribe(Collections.singletonList(switchModificationTopic))
 
@@ -61,7 +81,7 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
       val duration = Duration.ofSeconds(1)
       val recs = consumer.poll(duration).asScala
       val last = recs.last
-      assert(last.key() === uuid)
+      assert(last.key() === messageUuid)
       val knitwareInstruction = last.value()
       assert(knitwareInstruction === expectedKnitwareInstruction)
     }
