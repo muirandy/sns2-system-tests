@@ -52,9 +52,9 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
           |      <type>modify</type>
           |      <operatorOrderId>SogeaVoipModify_YHUORO</operatorOrderId>
           |      <operatorNotes>Test: notes</operatorNotes>
-          |      <orderId>33398605</orderId>
+          |      <orderId>33269793</orderId>
           |    </order>
-          |    <modifyFeaturesInstruction serviceId="31642339" operatorOrderId="FttcModify_YHUORO" operatorNotes="Test: addThenRemoveStaticIpToAnFttcService">
+          |    <modifyFeaturesInstruction serviceId="31642339" operatorOrderId="SogeaVoipModify_YHUORO" operatorNotes="Test: addThenRemoveStaticIpToAnFttcService">
           |      <features>
           |          <feature code="CallerDisplay"/>
           |          <feature code="RingBack"/>
