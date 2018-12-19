@@ -1,6 +1,5 @@
 package sns.lando.system
 
-import java.lang.Thread.sleep
 import java.time.Duration
 import java.util.{Collections, Properties, UUID}
 
@@ -38,7 +37,7 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
       |    <chooseToRefuse active="true"/>
       |  </features>
       |</switchServiceModificationInstruction>
-    """
+    """.stripMargin
 
   describe("SNS") {
     it("should update switch (Knitware)") {
@@ -67,6 +66,12 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
       val messageUuid = UUID.randomUUID().toString
 
       When("LLU-Stream writes a valid Modify Features Message")
+      val consumer = new KafkaConsumer[String, String](props)
+      consumer.subscribe(Collections.singletonList(switchModificationTopic))
+      val immediately = Duration.ofSeconds(0)
+      consumer.poll(immediately)
+      consumer.seekToBeginning(consumer.assignment)
+
       val lluStreamMessagesTopicProducer = new KafkaProducer[String, String](props)
       lluStreamMessagesTopicProducer.send(new ProducerRecord(lluStreamMessagesTopic, messageUuid, messageValue)).get()
 
@@ -74,11 +79,8 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
       lluStreamMessagesTopicProducer.close()
 
       Then("Knitware will receive an instruction to modify features")
-      val consumer = new KafkaConsumer[String, String](props)
-      consumer.subscribe(Collections.singletonList(switchModificationTopic))
 
-      sleep(2000)
-      val duration = Duration.ofSeconds(1)
+      val duration = Duration.ofSeconds(2)
       val recs = consumer.poll(duration).asScala
       val last = recs.last
       assert(last.key() === messageUuid)
