@@ -3,22 +3,26 @@
 2. Replace the config directory of Kafka with https://github.com/muirandy/sns2-kafka-config
 
 ##How to start Kafka by hand:
+```
 cd kafka_2.11-2.1.0
 bin/zookeeper-server-start.sh config/zookeeper.properties
 bin/kafka-server-start.sh config/server.properties
 bin/kafka-server-start.sh config/server-1.properties
 bin/kafka-server-start.sh config/server-2.properties
-
+```
 ##Create the topics if necessary:
+```
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic incoming.op.msgs
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic modify.op.msgs
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic enriched.modification.instructions
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic switch.modification.instructions
+```
 
 ##View the messages on the topics:
+```
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic incoming.op.msgs --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic switch.modification.instructions --from-beginning
-
+```
 
 
 Msg-Validator microservice
