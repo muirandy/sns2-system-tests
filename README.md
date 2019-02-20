@@ -16,6 +16,7 @@ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 -
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic modify.op.msgs
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic enriched.modification.instructions
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic switch.modification.instructions
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic service.events
 ```
 
 ##View the messages on the topics:
@@ -24,6 +25,10 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic incoming
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic switch.modification.instructions --from-beginning
 ```
 
+##Write directly to a topic:
+```
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic incoming.op.msgs
+```
 
 Msg-Validator microservice
 https://github.com/muirandy/sns2-op-msg-validator.git
