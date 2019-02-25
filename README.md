@@ -19,6 +19,9 @@ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 -
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic service.events
 ```
 
+##List the topics
+bin/kafka-topics.sh --list --zookeeper localhost:2181 
+
 ##View the messages on the topics:
 ```
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic incoming.op.msgs --from-beginning

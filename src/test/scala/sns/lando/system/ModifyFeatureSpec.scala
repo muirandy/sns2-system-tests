@@ -28,8 +28,7 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
 
 
   var expectedKnitwareInstruction =
-    """
-      |<?xml version="1.0" encoding="UTF-8"?>
+    """|<?xml version="1.0" encoding="UTF-8"?>
       |<switchServiceModificationInstruction switchServiceId="16" netstreamCorrelationId="33269793">
       |  <features>
       |    <callerDisplay active="true"/>
@@ -43,8 +42,7 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
     it("should update switch (Knitware)") {
       Given("A valid LLU-Stream Modify Features Message")
       val messageValue =
-        """
-          |<?xml version="1.0" encoding="UTF-8"?>
+        """|<?xml version="1.0" encoding="UTF-8"?>
           |<transaction receivedDate="2018-11-15T10:29:07" operatorId="sky" operatorTransactionId="op_trans_id_095025_228" operatorIssuedDate="2011-06-01T09:51:12">
           |  <instruction version="1" type="PlaceOrder">
           |    <order>
