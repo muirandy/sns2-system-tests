@@ -37,9 +37,9 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic service.
 bin/kafka-console-producer.sh --broker-list localhost:9092 --topic incoming.op.msgs
 ```
 
-##Reset a topic for a specif app:
+##Reset topic(s) for a specific app:
 ```
-bin/kafka-streams-application-reset.sh --application-id sns-modify-enricher
+bin/kafka-streams-application-reset.sh --application-id sns-modify-enricher --bootstrap-servers localhost:9092,localhost:9093,localhost:9094 --input-topics services,modify.op.msgs
 ```
 
 Msg-Validator microservice
