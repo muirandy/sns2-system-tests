@@ -26,13 +26,20 @@ bin/kafka-topics.sh --list --zookeeper localhost:2181
 ```
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic incoming.op.msgs --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic modify.op.msgs --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic services --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic enriched.modification.instructions --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic switch.modification.instructions --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic service.events --from-beginning
 ```
 
 ##Write directly to a topic:
 ```
 bin/kafka-console-producer.sh --broker-list localhost:9092 --topic incoming.op.msgs
+```
+
+##Reset a topic for a specif app:
+```
+bin/kafka-streams-application-reset.sh --application-id sns-modify-enricher
 ```
 
 Msg-Validator microservice
