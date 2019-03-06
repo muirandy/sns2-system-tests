@@ -29,7 +29,6 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic modify.o
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic services --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic enriched.modification.instructions --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic switch.modification.instructions --from-beginning
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic service.events --from-beginning
 ```
 
 ##Write directly to a topic:
@@ -133,7 +132,8 @@ WITH (KAFKA_TOPIC='modify.op.msgs', VALUE_FORMAT='JSON');
 
 ##Create Stream with extracted data, ready for enhancement  
 ```
-CREATE STREAM "modify.voice.feature.msgs" as SELECT transaction->operatorId AS "operatorId", transaction->instruction->order->operatorOrderId AS "operatorOrderId", transaction->instruction->order->orderId AS "orderId", transaction->instruction->modifyFeaturesInstruction->serviceId AS "serviceId", transaction->instruction->modifyFeaturesInstruction->features->feature[0]->code AS "feature0", transaction->instruction->modifyFeaturesInstruction->features->feature[1]->code AS "feature1", transaction->instruction->modifyFeaturesInstruction->features->feature[2]->code AS "feature2", transaction->instruction->modifyFeaturesInstruction->features->feature[3]->code AS "feature3" FROM INSTRUCTIONS_STREAM_1 WITH (KAFKA_TOPIC='modify.voice.feature.msgs', VALUE_FORMAT='JSON');
+CREATE STREAM "modify.voice.feature.msgs" as SELECT transaction->operatorId AS "operatorId", transaction->instruction->order->operatorOrderId AS "operatorOrderId", transaction->instruction->order->orderId AS "orderId", transaction->instruction->modifyFeaturesInstruction->serviceId AS "serviceId", transaction->instruction->modifyFeaturesInstruction->features AS "features" FROM INSTRUCTIONS_STREAM_1 WITH (KAFKA_TOPIC='modify.voice.feature.msgs', VALUE_FORMAT='JSON');
+CREATE STREAM "test2.modify.voice.feature.msgs" as SELECT transaction->operatorId AS "operatorId", transaction->instruction->order->operatorOrderId AS "operatorOrderId", transaction->instruction->order->orderId AS "orderId", transaction->instruction->modifyFeaturesInstruction->serviceId AS "serviceId", transaction->instruction->modifyFeaturesInstruction->features AS "features" FROM INSTRUCTIONS_STREAM_1 WITH (KAFKA_TOPIC='test2.modify.voice.feature.msgs', VALUE_FORMAT='JSON');
 ```
 
 #Links:
