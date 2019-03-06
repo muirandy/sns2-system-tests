@@ -103,7 +103,11 @@ ksql> DESCRIBE EXTENDED <TABLE/STREAM>
 ksql> SHOW <TABLES/STREAMS>
 ```
 
-#KSQL - SNS Infor
+#KSQL - SNS Info
+##From the KSQL prompt, ensure we see data already present in topics:
+```
+SET 'auto.offset.reset' = 'earliest';
+```
 
 ##Create stream to read the generic Json
 ```
