@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 curl -X "POST" "http://localhost:8088/ksql" \
      -H "Content-Type: application/vnd.ksql.v1+json; charset=utf-8" \
-     -d $'{
-  "ksql": "CREATE STREAM a4_modify_voice_feature_msgs as SELECT transaction->operatorId AS operatorId, transaction->instruction->order->operatorOrderId AS operatorOrderId FROM INSTRUCTIONS_STREAM_1 WITH (VALUE_FORMAT=JSON);",
+     -d '{
+  "ksql": "CREATE STREAM \"a10.modify.voice.feature.msgs\" as SELECT transaction->operatorId AS operatorId, transaction->instruction->order->operatorOrderId AS operatorOrderId FROM INSTRUCTIONS_STREAM_1 WITH (VALUE_FORMAT=JSON);",
   "streamsProperties": {"ksql.streams.auto.offset.reset": "earliest"}
 }'
 
