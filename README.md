@@ -103,12 +103,26 @@ ksql> SHOW <TABLES/STREAMS>
 ```
 
 #KSQL - SNS Info
-##From the KSQL prompt, ensure we see data already present in topics:
+
+##The Quick Way:
+With Kafka and KSQL running:
+1) Ensure the topics exist:
+```
+./setupKafka.sh
+```
+2) Create the streams through KSQL:
+```
+./modifyVoice.sh
+```
+
+##The Slow Way:
+
+###From the KSQL prompt, ensure we see data already present in topics:
 ```
 SET 'auto.offset.reset' = 'earliest';
 ```
 
-##Create stream to read the generic Json
+###Create stream to read the generic Json
 ```
 CREATE STREAM INSTRUCTIONS_STREAM_1 (transaction STRUCT <\
   operatorId VARCHAR,\
@@ -130,11 +144,12 @@ CREATE STREAM INSTRUCTIONS_STREAM_1 (transaction STRUCT <\
 WITH (KAFKA_TOPIC='modify.op.msgs', VALUE_FORMAT='JSON');
 ```
 
-##Create Stream with extracted data, ready for enhancement  
+###Create Stream with extracted data, ready for enhancement  
 ```
 CREATE STREAM "modify.voice.feature.msgs" as SELECT transaction->operatorId AS "operatorId", transaction->instruction->order->operatorOrderId AS "operatorOrderId", transaction->instruction->order->orderId AS "orderId", transaction->instruction->modifyFeaturesInstruction->serviceId AS "serviceId", transaction->instruction->modifyFeaturesInstruction->features AS "features" FROM INSTRUCTIONS_STREAM_1 WITH (KAFKA_TOPIC='modify.voice.feature.msgs', VALUE_FORMAT='JSON');
-CREATE STREAM "test2.modify.voice.feature.msgs" as SELECT transaction->operatorId AS "operatorId", transaction->instruction->order->operatorOrderId AS "operatorOrderId", transaction->instruction->order->orderId AS "orderId", transaction->instruction->modifyFeaturesInstruction->serviceId AS "serviceId", transaction->instruction->modifyFeaturesInstruction->features AS "features" FROM INSTRUCTIONS_STREAM_1 WITH (KAFKA_TOPIC='test2.modify.voice.feature.msgs', VALUE_FORMAT='JSON');
 ```
+
+
 
 #Links:
 Create a new scala-maven project: https://www.ivankrizsan.se/2016/03/27/creating-a-scala-project-with-maven-dependency-management-for-gatling-testing-in-intellij-idea/
