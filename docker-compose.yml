@@ -71,15 +71,6 @@ services:
 #      - "5601:5601"
 #    depends_on:
 #      - elasticsearch
-#  mysql:
-#    image: mysql
-#    ports:
-#      - 3306:3306
-#    environment:
-#      MYSQL_ROOT_PASSWORD: confluent
-#      MYSQL_USER: confluent
-#      MYSQL_PASSWORD: confluent
-#      MYSQL_DATABASE: connect_test
 #  schema-registry:
 #    image: confluentinc/cp-schema-registry:latest
 #    depends_on:
@@ -96,31 +87,32 @@ services:
     image: nemerosa/h2
     ports:
       - 9082:9082
-#  kafka-connect:
-#    build: kafka-connect
-#    ports:
-#      - 8083:8083
-#    environment:
-#      CONNECT_BOOTSTRAP_SERVERS: kafka01.internal-service:9092,kafka02.internal-service:9093,kafka03.internal-service:9094
-#      CONNECT_REST_ADVERTISED_PORT: 8083
-#      CONNECT_GROUP_ID: connect
-#      CONNECT_CONFIG_STORAGE_TOPIC: connect-config
-#      CONNECT_OFFSET_STORAGE_TOPIC: connect-offset
-#      CONNECT_STATUS_STORAGE_TOPIC: connect-status
-#      CONNECT_KEY_CONVERTER: "io.confluent.connect.avro.AvroConverter"
-#      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
-#      CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
-#      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+  kafka-connect:
+    build: kafka-connect
+#    image: confluentinc/cp-kafka-connect:5.1.2
+    ports:
+      - 8083:8083
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka01.internal-service:9092,kafka02.internal-service:9093,kafka03.internal-service:9094
+      CONNECT_REST_ADVERTISED_PORT: 8083
+      CONNECT_GROUP_ID: connect
+      CONNECT_CONFIG_STORAGE_TOPIC: connect-config
+      CONNECT_OFFSET_STORAGE_TOPIC: connect-offset
+      CONNECT_STATUS_STORAGE_TOPIC: connect-status
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
 #      CONNECT_VALUE_CONVERTER_SCHEMA_IGNORE: "true"
 #      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
 #      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-#      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-#      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-#      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
 #      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
-#      CONNECT_PLUGIN_PATH: "/usr/share/java,/opt/kafka-connect/jars"
-#    depends_on:
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/opt/kafka-connect/jars"
+    depends_on:
+      - kafka01.internal-service
+      - h2
 #      - elasticsearch
-#      - kafka01.internal-service
 #      - schema-registry
-#      - mysql
