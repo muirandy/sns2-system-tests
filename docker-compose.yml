@@ -110,7 +110,7 @@ services:
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
 #      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
-      CONNECT_PLUGIN_PATH: "/usr/share/java,/opt/kafka-connect/jars"
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/opt/kafka-connect/jars/h2/bin"
     depends_on:
       - kafka01.internal-service
       - h2
