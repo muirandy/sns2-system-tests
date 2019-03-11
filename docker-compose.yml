@@ -89,7 +89,6 @@ services:
       - 9082:9082
   kafka-connect:
     build: kafka-connect
-#    image: confluentinc/cp-kafka-connect:5.1.2
     ports:
       - 8083:8083
     environment:
@@ -103,16 +102,11 @@ services:
       CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
-#      CONNECT_VALUE_CONVERTER_SCHEMA_IGNORE: "true"
-#      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-#      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
 #      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
-      CONNECT_PLUGIN_PATH: "/usr/share/java,/opt/kafka-connect/jars/h2/bin"
+      CONNECT_PLUGIN_PATH: "/usr/share/java"
     depends_on:
       - kafka01.internal-service
       - h2
-#      - elasticsearch
-#      - schema-registry
