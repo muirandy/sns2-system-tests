@@ -1,7 +1,7 @@
 CREATE STREAM INSTRUCTIONS_STREAM_1 (transaction STRUCT <
   operatorId VARCHAR,
   instruction STRUCT <
-    order STRUCT <
+    "order" STRUCT <
       operatorOrderId VARCHAR,
       orderId VARCHAR
     >,
