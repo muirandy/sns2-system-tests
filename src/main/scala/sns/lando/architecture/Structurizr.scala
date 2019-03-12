@@ -36,5 +36,5 @@ object Structurizr extends App {
   val structurizrClient = new StructurizrClient (API_KEY, API_SECRET)
   structurizrClient.putWorkspace (WORKSPACE_ID, workspace)
 
-  views.create
+//  views.create
 }
