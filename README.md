@@ -17,6 +17,7 @@ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 -
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic enriched.modification.instructions
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic switch.modification.instructions
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic service.events
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic RAW_VOIP_INSTRUCTIONS
 ```
 
 ##List the topics
@@ -27,6 +28,7 @@ bin/kafka-topics.sh --list --zookeeper localhost:2181
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic incoming.op.msgs --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic modify.op.msgs --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic services --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic RAW_VOIP_INSTRUCTIONS --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic enriched.modification.instructions --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic switch.modification.instructions --from-beginning
 ```

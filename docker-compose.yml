@@ -55,34 +55,34 @@ services:
   #    depends_on:
   #      - zookeeper
   #      - kafka01.internal-service
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-#    ports:
-#      - 9200:9200
-#    environment:
-#      - xpack.security.enabled=false
-#      - cluster.name=sentiments
-#  kibana:
-#    image: docker.elastic.co/kibana/kibana:6.2.4
-#    environment:
-#      SERVER_NAME: kibana
-#      ELASTICSEARCH_URL: http://elasticsearch:9200
-#    ports:
-#      - "5601:5601"
-#    depends_on:
-#      - elasticsearch
-#  schema-registry:
-#    image: confluentinc/cp-schema-registry:latest
-#    depends_on:
-#      - zookeeper
-#      - kafka01.internal-service
-#      - kafka02.internal-service
-#      - kafka03.internal-service
-#    ports:
-#      - '8081:8081'
-#    environment:
-#      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-#      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper.internal-service:2181
+  #  elasticsearch:
+  #    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+  #    ports:
+  #      - 9200:9200
+  #    environment:
+  #      - xpack.security.enabled=false
+  #      - cluster.name=sentiments
+  #  kibana:
+  #    image: docker.elastic.co/kibana/kibana:6.2.4
+  #    environment:
+  #      SERVER_NAME: kibana
+  #      ELASTICSEARCH_URL: http://elasticsearch:9200
+  #    ports:
+  #      - "5601:5601"
+  #    depends_on:
+  #      - elasticsearch
+  #  schema-registry:
+  #    image: confluentinc/cp-schema-registry:latest
+  #    depends_on:
+  #      - zookeeper
+  #      - kafka01.internal-service
+  #      - kafka02.internal-service
+  #      - kafka03.internal-service
+  #    ports:
+  #      - '8081:8081'
+  #    environment:
+  #      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+  #      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper.internal-service:2181
   h2:
     image: nemerosa/h2
     ports:
@@ -105,7 +105,7 @@ services:
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
-#      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
+      #      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
       CONNECT_PLUGIN_PATH: "/usr/share/java"
     depends_on:
       - kafka01.internal-service

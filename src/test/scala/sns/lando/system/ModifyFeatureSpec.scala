@@ -27,13 +27,12 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
   props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaDeserializer)
   props.put(ConsumerConfig.GROUP_ID_CONFIG, this.getClass.getName)
 
-  var messageUuid = UUID.randomUUID().toString
   var orderId = Random.nextLong().toString
-  var opereratorOrderId = Random.nextString(12)
+  var opereratorOrderId = Random.nextLong().toString
 
   var expectedKnitwareInstruction =
     s"""|<?xml version="1.0" encoding="UTF-8"?>
-      |<switchServiceModificationInstruction switchServiceId="16" netstreamCorrelationId="${orderId}">
+      |<switchServiceModificationInstruction switchServiceId="1" netstreamCorrelationId="${orderId}">
       |  <features>
       |    <callerDisplay active="true"/>
       |    <ringBack active="true"/>

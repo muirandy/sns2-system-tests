@@ -1,15 +1,15 @@
 CREATE STREAM INSTRUCTIONS_STREAM_1 (transaction STRUCT <
-  operatorId VARCHAR,
-  instruction STRUCT <
+  "operatorId" VARCHAR,
+  "instruction" STRUCT <
     "order" STRUCT <
-      operatorOrderId VARCHAR,
-      orderId VARCHAR
+      "operatorOrderId" VARCHAR,
+      "orderId" VARCHAR
     >,
-    modifyFeaturesInstruction STRUCT <
-      serviceId VARCHAR,
-      features STRUCT<
-        feature array<STRUCT<
-          code VARCHAR
+    "modifyFeaturesInstruction" STRUCT <
+      "serviceId" VARCHAR,
+      "features" STRUCT<
+        "feature" array<STRUCT<
+          "code" VARCHAR
         >>
       >
     >
