@@ -1,6 +1,63 @@
 #End to End System tests: https://github.com/muirandy/sns2-system-tests
-1. Install Kafka in the usual way
-2. Replace the config directory of Kafka with https://github.com/muirandy/sns2-kafka-config
+
+#Welcome
+
+This is a good entry point to the codebase. 
+
+This project holds:
+1) End to end test
+2) Docker scripts to spin up kafka
+3) Useful scripts & instructions!
+
+#Instructions
+The first thing you need is an installation of Apache Kafka. We're not using the Confluent platform here.
+You can install Kafka natively onto your OS, or you an run it within Docker. The latter is preferred as its
+much quicker to get up and running!
+
+We need the following Kafka components:
+* Zookeeper
+* Kafka servers (3)
+* Kafka connect
+* KSQL
+* An H2 database
+
+#Kafka in Docker
+The docker-compose file gives us all the components you need!
+
+To spin it up (on OSX), you need Docker installed.
+
+##Start it all up
+```
+docker-compose up
+```
+
+##Populate the database 
+Follow the instructions in the [sns-repoman-db](https://github.com/muirandy/sns-repoman-db) project. This will also run Kafka connectors to the DB.
+
+##Run the KSQL scripts
+modifyVoice.sh
+enhanceVoip.sh
+
+##Run the microservices
+Follow the instructions on these projects:
+[Generic XML->JSON Converter](https://github.com/muirandy/sns-incoming-operator-messages-converter)
+[Enrich with ServiceId](https://github.com/muirandy/sns-modify-enricher)
+[Convert to Knitware XML](https://github.com/muirandy/sns-knitware-converter)
+
+##Run the System test
+In this project, run ModifyFeatureSpec. It should go green!
+By inspecting the projects, you should be able to tell what topics are involved.
+The system test will show you the start and end points.
+
+
+#Kafka on your native OS
+If spinning things up in Docker isn't for you, then you've got the rest of this README to get through. Its not too bad!
+
+##Install Kafka
+This should be done in the usual way (see the Kafka website)!
+
+##Update the config
+Replace the config directory of Kafka with https://github.com/muirandy/sns2-kafka-config
 
 ##How to start Kafka by hand:
 ```
