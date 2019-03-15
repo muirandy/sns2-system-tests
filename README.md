@@ -55,6 +55,9 @@ If spinning things up in Docker isn't for you, then you've got the rest of this 
 
 ##Install Kafka
 This should be done in the usual way (see the Kafka website)!
+However, note the branch of code ought to be the same tag as the version in the docker-compose file.
+The same is important when you are installing KSQL(later on in this file).
+At the time of writing, it was 5.1.2.
 
 ##Update the config
 Replace the config directory of Kafka with https://github.com/muirandy/sns2-kafka-config
