@@ -55,23 +55,23 @@ services:
   #    depends_on:
   #      - zookeeper
   #      - kafka01.internal-service
-  #  elasticsearch:
-  #    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-  #    ports:
-  #      - 9200:9200
-  #    environment:
-  #      - xpack.security.enabled=false
-  #      - cluster.name=sentiments
-  #  kibana:
-  #    image: docker.elastic.co/kibana/kibana:6.2.4
-  #    environment:
-  #      SERVER_NAME: kibana
-  #      ELASTICSEARCH_URL: http://elasticsearch:9200
-  #    ports:
-  #      - "5601:5601"
-  #    depends_on:
-  #      - elasticsearch
-  #  schema-registry:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
+    ports:
+      - 9200:9200
+    environment:
+      - xpack.security.enabled=false
+      - cluster.name=orders
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.6.2
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+#    schema-registry:
   #    image: confluentinc/cp-schema-registry:latest
   #    depends_on:
   #      - zookeeper
