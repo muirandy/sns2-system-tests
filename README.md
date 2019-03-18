@@ -122,7 +122,7 @@ cd config
 ##Start KSQL client
 ```
 cd bin
-ksql http://localhost:8088
+./ksql http://localhost:8088
 ```
 
 ##Show and update the KSQL properties:

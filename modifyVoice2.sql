@@ -1,19 +1,19 @@
 --Don't use this one - see the next one!
 --For running 5.1.2 in docker-compose
-CREATE STREAM T1_RAW_VOIP_INSTRUCTIONS as
-SELECT transaction->"operatorId" as "OPERATOR_ID",
-       transaction->"instruction"->"order"->"operatorOrderId" as "OPERATOR_ORDER_ID",
-       transaction->"instruction"->"order"->"orderId" as "ORDER_ID",
-       transaction->"instruction"->"modifyFeaturesInstruction"->"serviceId" as "SERVICE_ID",
-       transaction->"instruction"->"modifyFeaturesInstruction"->"features" as "FEATURES"
-FROM INSTRUCTIONS_STREAM_1 WITH (VALUE_FORMAT='JSON');
+-- CREATE STREAM T1_RAW_VOIP_INSTRUCTIONS as
+-- SELECT transaction->"operatorId" as "OPERATOR_ID",
+--        transaction->"instruction"->"order"->"operatorOrderId" as "OPERATOR_ORDER_ID",
+--        transaction->"instruction"->"order"->"orderId" as "ORDER_ID",
+--        transaction->"instruction"->"modifyFeaturesInstruction"->"serviceId" as "SERVICE_ID",
+--        transaction->"instruction"->"modifyFeaturesInstruction"->"features" as "FEATURES"
+-- FROM INSTRUCTIONS_STREAM_1 WITH (VALUE_FORMAT='JSON');
 
 -- USE THIS ONE for 5.1.2 !!!
 --Adjustment to above CSAS to remove FEATURES/Feature
 --Stream: 1552503296913 | -7971399265186620278 | sky | SogeaVoipModify_1141812285075116952 | -7971399265186620278 | 31642339 | [{code=CallerDisplay}, {code=RingBack}, {code=ChooseToRefuse}]
 --Topic:  {"OPERATOR_ID":"sky","OPERATOR_ORDER_ID":"SogeaVoipModify_1141812285075116952","ORDER_ID":"-7971399265186620278","SERVICE_ID":"31642339","FEATURES":[{"code":"CallerDisplay"},{"code":"RingBack"},{"code":"ChooseToRefuse"}]}
-CREATE STREAM RAW_VOIP_INSTRUCTIONS as
-SELECT transaction->"operatorId" as "OPERATOR_ID",
+CREATE STREAM RAW_VOIP_INSTRUCTIONS WITH (PARTITIONS=4,REPLICAS=3)
+AS SELECT transaction->"operatorId" as "OPERATOR_ID",
        transaction->"instruction"->"order"->"operatorOrderId" as "OPERATOR_ORDER_ID",
        transaction->"instruction"->"order"->"orderId" as "ORDER_ID",
        transaction->"instruction"->"modifyFeaturesInstruction"->"serviceId" as "SERVICE_ID",
