@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
 
-fileContents=$(<./enhanceVoipSwitchService1.sql)
-../ksql/bin/ksql http://localhost:8088 <<< "$fileContents"
-fileContents=$(<./enhanceVoipSwitchService2.sql)
-../ksql/bin/ksql http://localhost:8088 <<< "$fileContents"
-fileContents=$(<./enhanceVoipSwitchService3.sql)
-../ksql/bin/ksql http://localhost:8088 <<< "$fileContents"
-fileContents=$(<./enhanceVoipSwitchService4.sql)
-../ksql/bin/ksql http://localhost:8088 <<< "$fileContents"
-fileContents=$(<./enhanceVoipSwitchService5.sql)
-../ksql/bin/ksql http://localhost:8088 <<< "$fileContents"
-fileContents=$(<./enhanceVoipSwitchService6.sql)
-../ksql/bin/ksql http://localhost:8088 <<< "$fileContents"
-
+../ksql/bin/ksql http://localhost:8088 <<EOF
+RUN SCRIPT './enhanceVoipSwitchService1.sql';
+RUN SCRIPT './enhanceVoipSwitchService2.sql';
+RUN SCRIPT './enhanceVoipSwitchService3.sql';
+RUN SCRIPT './enhanceVoipSwitchService4.sql';
+RUN SCRIPT './enhanceVoipSwitchService5.sql';
+RUN SCRIPT './enhanceVoipSwitchService6.sql';
 exit
+EOF
+
