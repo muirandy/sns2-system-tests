@@ -34,6 +34,15 @@ The docker-compose file gives us all the components you need!
 
 To spin it up (on OSX), you need Docker installed.
 
+##Edit hosts file
+Add the following entries to your hosts file:
+```
+127.0.0.1	kafka01.internal-service
+127.0.0.1	kafka02.internal-service
+127.0.0.1	kafka03.internal-service
+127.0.0.1	zookeeper.internal-service
+```
+
 ##Start it all up
 ```
 docker-compose up
