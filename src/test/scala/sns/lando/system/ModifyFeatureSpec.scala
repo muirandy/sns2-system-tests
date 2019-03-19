@@ -25,6 +25,8 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
   props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaSerializer)
   props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaDeserializer)
   props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaDeserializer)
+  props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100")
+  props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
   props.put(ConsumerConfig.GROUP_ID_CONFIG, this.getClass.getName)
 
   var orderId = Random.nextLong().toString
@@ -71,7 +73,6 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
       consumer.subscribe(Collections.singletonList(switchModificationTopic))
       val immediately = Duration.ofSeconds(0)
       consumer.poll(immediately)
-      consumer.seekToBeginning(consumer.assignment)
 
       val lluStreamMessagesTopicProducer = new KafkaProducer[String, String](props)
       lluStreamMessagesTopicProducer.send(new ProducerRecord(lluStreamMessagesTopic, orderId, messageValue)).get()
@@ -81,7 +82,8 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
 
       Then("Knitware will receive an instruction to modify features")
 
-      val duration = Duration.ofSeconds(2)
+      val duration = Duration.ofSeconds(4)
+      consumer.seekToBeginning(consumer.assignment)
       val recs = consumer.poll(duration).asScala
       val last = recs.last
       assert(last.key() === orderId)
