@@ -21,6 +21,14 @@ We need the following Kafka components:
 * KSQL
 * An H2 database
 
+#Install KSQL in your working folder (as a sibling of other kafka projects)
+```
+git clone https://github.com/confluentinc/ksql.git
+cd ksql
+git checkout tags/v5.1.2
+mvn clean compile install -DskipTests
+```
+
 #Kafka in Docker
 The docker-compose file gives us all the components you need!
 
@@ -30,13 +38,10 @@ To spin it up (on OSX), you need Docker installed.
 ```
 docker-compose up
 ```
-
-##Populate the database 
-Follow the instructions in the [sns-repoman-db](https://github.com/muirandy/sns-repoman-db) project. This will also run Kafka connectors to the DB.
-
-##Run the KSQL scripts
-modifyVoice.sh
-enhanceVoip.sh
+Once the brokers have calmed down after starting (ie logs are a bit stable!), run this script:
+```
+./doItall.sh
+```
 
 ##Run the microservices
 Follow the instructions on these projects:
@@ -226,4 +231,5 @@ https://github.com/smallnest/kafka-example-in-scala/blob/master/src/main/scala/c
 Sample project reading / writing to kafka topics: https://github.com/schmiegelow/iwomm-kafka
 
 
-
+###Old Docker versions for mac:
+https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19
