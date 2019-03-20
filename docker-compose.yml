@@ -19,6 +19,7 @@ services:
       - zookeeper
     ports:
       - '9092:9092'
+#    hostname: kafka01
     environment:
       KAFKA_BROKER_ID: 0
       KAFKA_ZOOKEEPER_CONNECT: zookeeper.internal-service:2181
@@ -29,6 +30,7 @@ services:
       - zookeeper
     ports:
       - '9093:9093'
+#    hostname: kafka02
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper.internal-service:2181
@@ -39,6 +41,7 @@ services:
       - zookeeper
     ports:
       - '9094:9094'
+#    hostname: kafka03
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper.internal-service:2181
@@ -56,14 +59,14 @@ services:
   #      - zookeeper
   #      - kafka01.internal-service
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     ports:
       - 9200:9200
     environment:
       - xpack.security.enabled=false
       - cluster.name=orders
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.6.2
+    image: docker.elastic.co/kibana/kibana:6.2.4
     environment:
       SERVER_NAME: kibana
       ELASTICSEARCH_URL: http://elasticsearch:9200
