@@ -7,7 +7,7 @@ http://localhost:8083/connectors \
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "tasks.max": "1",
-    "topics": "modifyOperatorMessagesTopic,sinkModifyVoipInstructionsWithSwitchIdTopic",
+    "topics": "modify.op.msgs,SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID",
     "key.ignore": "true",
     "topic.schema.ignore":"true",
     "schema.ignore":"true",

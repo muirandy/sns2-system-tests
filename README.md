@@ -104,8 +104,8 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic modify.o
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic services --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic RAW_VOIP_INSTRUCTIONS --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic enriched.modification.instructions --from-beginning
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic enriched.modification.instructions.with.service --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID --from-beginning
 
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic switch.modification.instructions --from-beginning
 ```

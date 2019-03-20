@@ -44,10 +44,10 @@ object Structurizr extends App {
   val rawVoipInstructionsTopic = mySoftwareSystem.addContainer("RAW_VOIP_INSTRUCTIONS", "Parsed Json representing Modify Voice Features Instructions", "Kafka, JSON")
   rawVoipInstructionsTopic.addTags(KAFKA_TOPIC_TAG)
 
-  val serviceEnricher = mySoftwareSystem.addContainer("Service Enrichment", "Enriches message with Service data", "Scala")
+  val serviceEnricher = mySoftwareSystem.addContainer("Service Enrichment", "Enriches message with DN", "Scala")
   serviceEnricher.addTags(MICROSERVICE_TAG)
 
-  val enrichedModificationInstructionsWithServiceTopic = mySoftwareSystem.addContainer("enriched.modification.instructions.with.service", "Modify Voice message enhanced with Service", "Kafka, JSON")
+  val enrichedModificationInstructionsWithServiceTopic = mySoftwareSystem.addContainer("enriched.modification.instructions.with.service", "Modify Voice message enhanced with DN", "Kafka, JSON")
   enrichedModificationInstructionsWithServiceTopic.addTags(KAFKA_TOPIC_TAG)
 
   val ksqlSwitchEnhancerStream = mySoftwareSystem.addContainer("Switch Enrichment", "Joins switchId into Modify Voice Features", "KSQL")
@@ -102,25 +102,25 @@ object Structurizr extends App {
   containerView.addAllElements()
 
   val dynamicView = views.createDynamicView(mySoftwareSystem, "CustomerUpdateEvent", "This diagram shows what happens when a customer updates their details.")
-  dynamicView.add(snsNorth, snsNorthAdapter)
-  dynamicView.add(snsNorthAdapter, customerService)
-
-  dynamicView.add(customerService, customerDatabase)
-  dynamicView.add(customerService, messageBus)
-
-  dynamicView.startParallelSequence()
-  dynamicView.add(messageBus, reportingService)
-  dynamicView.add(reportingService, reportingDatabase)
-  dynamicView.endParallelSequence()
-
-  dynamicView.startParallelSequence()
-  dynamicView.add(messageBus, auditService)
-  dynamicView.add(auditService, auditStore)
-  dynamicView.endParallelSequence()
-
-  dynamicView.startParallelSequence()
-  dynamicView.add(customerService, "Confirms update to", snsNorthAdapter)
-  dynamicView.endParallelSequence()
+//  dynamicView.add(snsNorth, snsNorthAdapter)
+//  dynamicView.add(snsNorthAdapter, customerService)
+//
+//  dynamicView.add(customerService, customerDatabase)
+//  dynamicView.add(customerService, messageBus)
+//
+//  dynamicView.startParallelSequence()
+//  dynamicView.add(messageBus, reportingService)
+//  dynamicView.add(reportingService, reportingDatabase)
+//  dynamicView.endParallelSequence()
+//
+//  dynamicView.startParallelSequence()
+//  dynamicView.add(messageBus, auditService)
+//  dynamicView.add(auditService, auditStore)
+//  dynamicView.endParallelSequence()
+//
+//  dynamicView.startParallelSequence()
+//  dynamicView.add(customerService, "Confirms update to", snsNorthAdapter)
+//  dynamicView.endParallelSequence()
 
   val styles = views.getConfiguration.getStyles
   styles.addElementStyle(Tags.ELEMENT).color("#000000")
