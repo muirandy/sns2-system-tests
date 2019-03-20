@@ -7,7 +7,7 @@ http://localhost:8083/connectors \
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
     "tasks.max": "1",
-    "topics": "incoming.op.msgs,switch.modification.instructions",
+    "topics": "modifyOperatorMessagesTopic,sinkModifyVoipInstructionsWithSwitchIdTopic",
     "key.ignore": "true",
     "topic.schema.ignore":"true",
     "schema.ignore":"true",
@@ -16,3 +16,5 @@ http://localhost:8083/connectors \
     "name": "elasticsearch-sink"
   }
 }'
+
+#curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink

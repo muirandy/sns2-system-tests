@@ -83,6 +83,11 @@ object Structurizr extends App {
   snsNorthAdapter.uses(incomingOperatorMessagesTopic, "Writes to")
   xmlToJsonConverter.uses(incomingOperatorMessagesTopic, "Reads from")
   xmlToJsonConverter.uses(modifyOperatorMessagesTopic, "Writes to")
+
+
+  knitwareConverter.uses(sinkModifyVoipInstructionsWithSwitchIdTopic, "Reads from")
+
+
 //  customerService.uses(messageBus, "Sends customer update events to", "", InteractionStyle.Asynchronous)
 //  customerService.uses(customerDatabase, "Stores data in", "JDBC", InteractionStyle.Synchronous)
 //  customerService.uses(snsNorthAdapter, "Sends events to", "WebSocket", InteractionStyle.Asynchronous)
