@@ -34,7 +34,8 @@ object BulkMessageGenerator extends App {
 
 
   while (true) {
-    lluStreamMessagesTopicProducer.send(new ProducerRecord(lluStreamMessagesTopic, orderId, messageValue)).get()
+    val orderId = generateOrderId
+    lluStreamMessagesTopicProducer.send(new ProducerRecord(lluStreamMessagesTopic, orderId, messageValue(orderId))).get()
     Thread.sleep(1000)
   }
 
@@ -44,13 +45,13 @@ object BulkMessageGenerator extends App {
     lluStreamMessagesTopicProducer.close()
   }
 
-  def orderId = Random.nextLong().abs.toString
+  def generateOrderId = Random.nextLong().abs.toString
   def opereratorOrderId = Random.nextLong().abs.toString
 
   def getRandomElement(list: Seq[String]): String =
     list(random.nextInt(list.length))
 
-  def messageValue = {
+  def messageValue(orderId: String) = {
     val id = opereratorOrderId
     s"""|<?xml version="1.0" encoding="UTF-8"?>
         |<transaction receivedDate="2018-11-15T10:29:07" operatorId="${getRandomElement(operatorIds)}" operatorTransactionId="op_trans_id_095025_228" operatorIssuedDate="2011-06-01T09:51:12">

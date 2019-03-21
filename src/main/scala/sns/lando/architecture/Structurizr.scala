@@ -14,10 +14,9 @@ object Structurizr extends App {
   //
 
   private val MICROSERVICE_TAG = "Microservice"
-  private val MESSAGE_BUS_TAG = "Message Bus"
   private val KAFKA_TOPIC_TAG = "Kafka Topic"
-  private val KAFKA_STREAM_TAG = "Kafka Stream"
-  private val KAFKA_TABLE_TAG = "Kafka Table"
+  private val KSQL_TAG = "Kafka KSQL"
+  private val KAFKA_CONNECT_TAG = "Kafka Connect"
   private val DATASTORE_TAG = "Database"
 
   // a Structurizr workspace is the wrapper for a software architecture model, views and documentation
@@ -39,7 +38,7 @@ object Structurizr extends App {
   modifyOperatorMessagesTopic.addTags(KAFKA_TOPIC_TAG)
 
   val instructionsStream1 = mySoftwareSystem.addContainer("Modify Voice Stream", "Parses Modify Voice Instruction", "KSQL")
-  instructionsStream1.addTags(KAFKA_STREAM_TAG)
+  instructionsStream1.addTags(KSQL_TAG)
 
   val rawVoipInstructionsTopic = mySoftwareSystem.addContainer("RAW_VOIP_INSTRUCTIONS", "Parsed Json representing Modify Voice Features Instructions", "Kafka, JSON")
   rawVoipInstructionsTopic.addTags(KAFKA_TOPIC_TAG)
@@ -51,7 +50,7 @@ object Structurizr extends App {
   enrichedModificationInstructionsWithServiceTopic.addTags(KAFKA_TOPIC_TAG)
 
   val ksqlSwitchEnhancerStream = mySoftwareSystem.addContainer("Switch Enrichment", "Joins switchId into Modify Voice Features", "KSQL")
-  ksqlSwitchEnhancerStream.addTags(KAFKA_STREAM_TAG)
+  ksqlSwitchEnhancerStream.addTags(KSQL_TAG)
 
   val sinkModifyVoipInstructionsWithSwitchIdTopic = mySoftwareSystem.addContainer("SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID", "Modify Voice Features enhanced with SwitchId", "Kafka, JSON")
   sinkModifyVoipInstructionsWithSwitchIdTopic.addTags(KAFKA_TOPIC_TAG)
@@ -60,32 +59,55 @@ object Structurizr extends App {
   knitwareConverter.addTags(MICROSERVICE_TAG)
 
 
+  val servicesDatabase = mySoftwareSystem.addContainer("Services Database", "Stores service information", "Oracle")
+  servicesDatabase.addTags(DATASTORE_TAG)
 
-  val customerService = mySoftwareSystem.addContainer("Customer Service", "The point of access for customer information.", "Java and Spring Boot")
-  customerService.addTags(MICROSERVICE_TAG)
-  val customerDatabase = mySoftwareSystem.addContainer("Customer Database", "Stores customer information.", "Oracle 12c")
-  customerDatabase.addTags(DATASTORE_TAG)
+  val jdbcServicesSource = mySoftwareSystem.addContainer("Services JDBC Connector", "Extracts services data", "Oracle")
+  jdbcServicesSource.addTags(KAFKA_CONNECT_TAG)
+  val jdbcServicesSourceTopic = mySoftwareSystem.addContainer("services", "Service data", "Kafka, JSON")
+  jdbcServicesSourceTopic.addTags(KAFKA_TOPIC_TAG)
 
-  val reportingService = mySoftwareSystem.addContainer("Reporting Service", "Creates normalised data for reporting purposes.", "Ruby")
-  reportingService.addTags(MICROSERVICE_TAG)
-  val reportingDatabase = mySoftwareSystem.addContainer("Reporting Database", "Stores a normalised version of all business data for ad hoc reporting purposes.", "MySQL")
-  reportingDatabase.addTags(DATASTORE_TAG)
+  val jdbcSwitchSource = mySoftwareSystem.addContainer("Switch JDBC Connector", "Extracts switch data", "Oracle")
+  jdbcSwitchSource.addTags(KAFKA_CONNECT_TAG)
+  val jdbcSwitchSourceTopic = mySoftwareSystem.addContainer("voip-switch-services", "Switch data", "Kafka, JSON")
+  jdbcSwitchSourceTopic.addTags(KAFKA_TOPIC_TAG)
 
-  val auditService = mySoftwareSystem.addContainer("Audit Service", "Provides organisation-wide auditing facilities.", "C# .NET")
-  auditService.addTags(MICROSERVICE_TAG)
-  val auditStore = mySoftwareSystem.addContainer("Audit Store", "Stores information about events that have happened.", "Event Store")
-  auditStore.addTags(DATASTORE_TAG)
 
-  val messageBus = mySoftwareSystem.addContainer("Message Bus", "Transport for business events.", "RabbitMQ")
-  messageBus.addTags(MESSAGE_BUS_TAG)
+//  val customerService = mySoftwareSystem.addContainer("Customer Service", "The point of access for customer information.", "Java and Spring Boot")
+//  customerService.addTags(MICROSERVICE_TAG)
+//
+//  val reportingService = mySoftwareSystem.addContainer("Reporting Service", "Creates normalised data for reporting purposes.", "Ruby")
+//  reportingService.addTags(MICROSERVICE_TAG)
+//  val reportingDatabase = mySoftwareSystem.addContainer("Reporting Database", "Stores a normalised version of all business data for ad hoc reporting purposes.", "MySQL")
+//  reportingDatabase.addTags(DATASTORE_TAG)
+//
+//  val auditService = mySoftwareSystem.addContainer("Audit Service", "Provides organisation-wide auditing facilities.", "C# .NET")
+//  auditService.addTags(MICROSERVICE_TAG)
+//  val auditStore = mySoftwareSystem.addContainer("Audit Store", "Stores information about events that have happened.", "Event Store")
+//  auditStore.addTags(DATASTORE_TAG)
+
+//  val messageBus = mySoftwareSystem.addContainer("Message Bus", "Transport for business events.", "RabbitMQ")
+//  messageBus.addTags(MESSAGE_BUS_TAG)
+  jdbcServicesSource.uses(servicesDatabase, "Sources Service data from", "JDBC")
+  jdbcServicesSource.uses(jdbcServicesSourceTopic, "Writes to")
+  jdbcSwitchSource.uses(servicesDatabase, "Sources Switch data from", "JDBC")
+  jdbcSwitchSource.uses(jdbcSwitchSourceTopic, "Writes to")
 
   snsNorth.uses(snsNorthAdapter, "Sends Commands to", "XML/HTTPS", InteractionStyle.Synchronous)
   snsNorthAdapter.uses(incomingOperatorMessagesTopic, "Writes to")
   xmlToJsonConverter.uses(incomingOperatorMessagesTopic, "Reads from")
   xmlToJsonConverter.uses(modifyOperatorMessagesTopic, "Writes to")
-
-
+  instructionsStream1.uses(modifyOperatorMessagesTopic, "Reads from")
+  instructionsStream1.uses(rawVoipInstructionsTopic, "Writes to")
+  serviceEnricher.uses(rawVoipInstructionsTopic, "Reads from")
+  serviceEnricher.uses(jdbcServicesSourceTopic, "Reads from")
+  serviceEnricher.uses(enrichedModificationInstructionsWithServiceTopic, "Writes to")
+  ksqlSwitchEnhancerStream.uses(enrichedModificationInstructionsWithServiceTopic, "Reads from")
+  ksqlSwitchEnhancerStream.uses(jdbcSwitchSourceTopic, "Reads from")
+  ksqlSwitchEnhancerStream.uses(sinkModifyVoipInstructionsWithSwitchIdTopic, "Writes to")
   knitwareConverter.uses(sinkModifyVoipInstructionsWithSwitchIdTopic, "Reads from")
+
+
 
 
 //  customerService.uses(messageBus, "Sends customer update events to", "", InteractionStyle.Asynchronous)
@@ -126,8 +148,9 @@ object Structurizr extends App {
   styles.addElementStyle(Tags.ELEMENT).color("#000000")
   styles.addElementStyle(Tags.PERSON).background("#ffbf00").shape(Shape.Person)
   styles.addElementStyle(Tags.CONTAINER).background("#facc2E")
-  styles.addElementStyle(MESSAGE_BUS_TAG).width(1600).shape(Shape.Pipe)
-  styles.addElementStyle(MICROSERVICE_TAG).shape(Shape.Hexagon)
+  styles.addElementStyle(KAFKA_TOPIC_TAG).width(500).shape(Shape.Pipe)
+  styles.addElementStyle(MICROSERVICE_TAG).shape(Shape.Box)
+  styles.addElementStyle(KSQL_TAG).shape(Shape.Hexagon)
   styles.addElementStyle(DATASTORE_TAG).background("#f5da81").shape(Shape.Cylinder)
   styles.addRelationshipStyle(Tags.RELATIONSHIP).routing(Routing.Orthogonal)
 

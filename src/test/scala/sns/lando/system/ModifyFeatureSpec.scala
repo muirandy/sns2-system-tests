@@ -83,7 +83,6 @@ class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
       Then("Knitware will receive an instruction to modify features")
 
       val duration = Duration.ofSeconds(4)
-      consumer.seekToBeginning(consumer.assignment)
       val recs = consumer.poll(duration).asScala
       val last = recs.last
       assert(last.key() === orderId)
