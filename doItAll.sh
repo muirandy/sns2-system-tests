@@ -11,4 +11,5 @@ cd ../sns-repoman-db
 ./createSwitchServiceJdbcConnector.sh
 
 cd ../sns2-system-tests
+./auditing.sh
 ./analytics.sh
