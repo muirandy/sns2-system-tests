@@ -229,6 +229,21 @@ CREATE STREAM "modify.voice.feature.msgs" as SELECT transaction->operatorId AS "
 ```
 
 
+#Elasticsearch
+
+##To search for the order id 2370787351871460436:
+```
+curl -X GET "localhost:9200/audit/_search" -H 'Content-Type: application/json' -d'
+{
+  "query": { "match": { "ORDER_ID": "2370787351871460436" } }
+}
+'
+```
+
+##To delete elasticsearch connector:
+```
+curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink
+```
 
 #Links:
 Create a new scala-maven project: https://www.ivankrizsan.se/2016/03/27/creating-a-scala-project-with-maven-dependency-management-for-gatling-testing-in-intellij-idea/
@@ -245,3 +260,4 @@ Sample project reading / writing to kafka topics: https://github.com/schmiegelow
 
 ###Old Docker versions for mac:
 https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19
+
