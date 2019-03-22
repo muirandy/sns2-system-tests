@@ -41,6 +41,9 @@ Add the following entries to your hosts file:
 127.0.0.1	kafka02.internal-service
 127.0.0.1	kafka03.internal-service
 127.0.0.1	zookeeper.internal-service
+127.0.0.1	elasticsearch
+127.0.0.1	kabana
+127.0.0.1	grafana
 ```
 
 ##Start it all up
