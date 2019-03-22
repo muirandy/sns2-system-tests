@@ -106,6 +106,7 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic enriched.modification.instructions --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic enriched.modification.instructions.with.service --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic AUDIT --from-beginning
 
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic switch.modification.instructions --from-beginning
 ```
@@ -244,6 +245,14 @@ curl -X GET "localhost:9200/audit/_search" -H 'Content-Type: application/json' -
 ```
 curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink
 ```
+
+##Delete an ES index
+curl -X DELETE "localhost:9200/audit?pretty"
+
+##Delete a ES template
+curl -X DELETE "localhost:9200/_template/template_1"
+
+
 
 #Links:
 Create a new scala-maven project: https://www.ivankrizsan.se/2016/03/27/creating-a-scala-project-with-maven-dependency-management-for-gatling-testing-in-intellij-idea/
