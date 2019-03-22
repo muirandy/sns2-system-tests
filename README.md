@@ -107,7 +107,6 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic enriched.modification.instructions.with.service --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic AUDIT --from-beginning
-
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic switch.modification.instructions --from-beginning
 ```
 
@@ -232,6 +231,21 @@ CREATE STREAM "modify.voice.feature.msgs" as SELECT transaction->operatorId AS "
 
 #Elasticsearch
 
+##List all indices:
+```
+curl -X GET "localhost:9200/_cat/indices?v"
+```
+
+##Show the types on an index
+```
+curl -X GET "localhost:9200/audit/_mappings?pretty"
+```
+
+##Show the index content
+```
+curl -X GET "localhost:9200/audit/_search?q=*&pretty"
+```
+
 ##To search for the order id 2370787351871460436:
 ```
 curl -X GET "localhost:9200/audit/_search" -H 'Content-Type: application/json' -d'
@@ -247,10 +261,14 @@ curl -X DELETE http://localhost:8083/connectors/elasticsearch-sink
 ```
 
 ##Delete an ES index
+```
 curl -X DELETE "localhost:9200/audit?pretty"
+```
 
 ##Delete a ES template
+```
 curl -X DELETE "localhost:9200/_template/template_1"
+```
 
 
 
