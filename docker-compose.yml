@@ -74,6 +74,16 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:5.2.4
+    ports:
+      - 3000:3000
+    environment:
+      GRAFANA_HOST: grafana
+#    volumes:
+#      - $PWD/ksql/ksql-clickstream-demo/demo:/scripts
+
 #    schema-registry:
   #    image: confluentinc/cp-schema-registry:latest
   #    depends_on:

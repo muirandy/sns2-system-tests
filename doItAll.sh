@@ -13,3 +13,6 @@ cd ../sns-repoman-db
 cd ../sns2-system-tests
 ./auditing.sh
 ./analytics.sh
+
+./grafana.sh
+./grafanaDashboard.sh
