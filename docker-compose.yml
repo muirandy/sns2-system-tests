@@ -59,14 +59,14 @@ services:
   #      - zookeeper
   #      - kafka01.internal-service
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
     ports:
       - 9200:9200
     environment:
       - xpack.security.enabled=false
       - cluster.name=orders
   kibana:
-    image: docker.elastic.co/kibana/kibana:6.2.4
+    image: docker.elastic.co/kibana/kibana:6.6.2
     environment:
       SERVER_NAME: kibana
       ELASTICSEARCH_URL: http://elasticsearch:9200
