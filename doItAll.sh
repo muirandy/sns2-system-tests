@@ -16,3 +16,5 @@ cd ../sns2-system-tests
 
 ./grafana.sh
 ./grafanaDashboard.sh
+
+./kibanaDashboard.sh
