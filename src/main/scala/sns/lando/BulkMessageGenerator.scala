@@ -1,9 +1,8 @@
-package sns.lando.system
+package sns.lando
 
-import java.time.Duration
-import java.util.{Collections, Properties}
+import java.util.Properties
 
-import org.apache.kafka.clients.consumer.{ConsumerConfig, KafkaConsumer}
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 
 import scala.util.Random
@@ -36,7 +35,7 @@ object BulkMessageGenerator extends App {
   while (true) {
     val orderId = generateOrderId
     lluStreamMessagesTopicProducer.send(new ProducerRecord(lluStreamMessagesTopic, orderId, messageValue(orderId))).get()
-    Thread.sleep(randomDelay)
+//    Thread.sleep(randomDelay)
   }
 
 
