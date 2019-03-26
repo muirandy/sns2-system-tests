@@ -36,13 +36,19 @@ object BulkMessageGenerator extends App {
   while (true) {
     val orderId = generateOrderId
     lluStreamMessagesTopicProducer.send(new ProducerRecord(lluStreamMessagesTopic, orderId, messageValue(orderId))).get()
-    Thread.sleep(1000)
+    Thread.sleep(randomDelay)
   }
 
 
   sys.ShutdownHookThread {
     lluStreamMessagesTopicProducer.flush()
     lluStreamMessagesTopicProducer.close()
+  }
+
+  def randomDelay = {
+    val start = 100
+    val end = 2000
+    start + random.nextInt((end - start) + 1)
   }
 
   def generateOrderId = Random.nextLong().abs.toString
