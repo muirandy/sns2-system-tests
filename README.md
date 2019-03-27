@@ -44,6 +44,7 @@ Add the following entries to your hosts file:
 127.0.0.1	elasticsearch
 127.0.0.1	kabana
 127.0.0.1	grafana
+127.0.0.1	zipkin
 ```
 
 ##Start it all up
@@ -288,6 +289,4 @@ https://github.com/smallnest/kafka-example-in-scala/blob/master/src/main/scala/c
 Sample project reading / writing to kafka topics: https://github.com/schmiegelow/iwomm-kafka
 
 
-###Old Docker versions for mac:
-https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19
 

@@ -58,31 +58,6 @@ services:
   #    depends_on:
   #      - zookeeper
   #      - kafka01.internal-service
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
-    ports:
-      - 9200:9200
-    environment:
-      - xpack.security.enabled=false
-      - cluster.name=orders
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.6.2
-    environment:
-      SERVER_NAME: kibana
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:5.2.4
-    ports:
-      - 3000:3000
-    environment:
-      GRAFANA_HOST: grafana
-#    volumes:
-#      - $PWD/ksql/ksql-clickstream-demo/demo:/scripts
 
 #    schema-registry:
   #    image: confluentinc/cp-schema-registry:latest
@@ -120,6 +95,14 @@ services:
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
       #      CONNECT_LOG4J_LOGGERS: org.reflections=ERROR
       CONNECT_PLUGIN_PATH: "/usr/share/java"
+      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: 'no.sysco.middleware.kafka.interceptor.zipkin.TracingProducerInterceptor'
+      CONNECT_PRODUCER_ZIPKIN_SENDER_TYPE: "HTTP"
+      CONNECT_PRODUCER_ZIPKIN_HTTP_ENDPOINT: "http://zipkin:9411/api/v2/spans"
+      CONNECT_PRODUCER_ZIPKIN_LOCAL_SERVICE_NAME: "kafka-connect"
+      CONNECT_CONSUMER_ZIPKIN_SENDER_TYPE: "HTTP"
+      CONNECT_CONSUMER_ZIPKIN_HTTP_ENDPOINT: "http://zipkin:9411/api/v2/spans"
+      CONNECT_CONSUMER_ZIPKIN_LOCAL_SERVICE_NAME: "kafka-connect"
+      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "no.sysco.middleware.kafka.interceptor.zipkin.TracingConsumerInterceptor"
     depends_on:
       - kafka01.internal-service
       - h2
@@ -131,5 +114,39 @@ services:
       KSQL_BOOTSTRAP_SERVERS: kafka01.internal-service:9092,kafka02.internal-service:9093,kafka03.internal-service:9094
       KSQL_LISTENERS: http://0.0.0.0:8088/
       KSQL_KSQL_SERVICE_ID: ksql_sid
+    depends_on:
+      - kafka01.internal-service
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
+    ports:
+      - 9200:9200
+    environment:
+      - xpack.security.enabled=false
+      - cluster.name=orders
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.6.2
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:5.2.4
+    ports:
+      - 3000:3000
+    environment:
+      GRAFANA_HOST: grafana
+#    volumes:
+#      - $PWD/ksql/ksql-clickstream-demo/demo:/scripts
+  zipkin:
+    image: openzipkin/zipkin:2.12.6
+    environment:
+      STORAGE_TYPE: mem
+      KAFKA_BOOTSTRAP_SERVERS: kafka01.internal-service:9092
+    ports:
+      - 9411:9411
     depends_on:
       - kafka01.internal-service
