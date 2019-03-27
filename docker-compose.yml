@@ -107,13 +107,18 @@ services:
       - kafka01.internal-service
       - h2
   kafka-ksql:
-    image: confluentinc/cp-ksql-server:5.1.2
+    build: kafka-ksql
     ports:
       - 8088:8088
     environment:
       KSQL_BOOTSTRAP_SERVERS: kafka01.internal-service:9092,kafka02.internal-service:9093,kafka03.internal-service:9094
       KSQL_LISTENERS: http://0.0.0.0:8088/
       KSQL_KSQL_SERVICE_ID: ksql_sid
+      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "no.sysco.middleware.kafka.interceptor.zipkin.TracingConsumerInterceptor"
+      KSQL_ZIPKIN_SENDER_TYPE: "HTTP"
+      KSQL_ZIPKIN_HTTP_ENDPOINT: "http://zipkin:9411/api/v2/spans"
+      KSQL_ZIPKIN_LOCAL_SERVICE_NAME: "kafka-ksql"
+      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "no.sysco.middleware.kafka.interceptor.zipkin.TracingProducerInterceptor"
     depends_on:
       - kafka01.internal-service
   elasticsearch:
