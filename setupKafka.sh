@@ -10,3 +10,5 @@ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 -
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 4 --topic voip-switch-services
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 4 --topic MODIFY_VOICE_FEATURE_MSGS
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 4 --topic RAW_VOIP_INSTRUCTIONS
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 4 --topic KNITWARE_ERRORS_XML
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 4 --topic KNITWARE_ERRORS
