@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-curl -X PUT "localhost:9200/_template/template_1" -H 'Content-Type: application/json' -d'
+curl -X PUT "elasticsearch:9200/_template/template_1" -H 'Content-Type: application/json' -d'
 {
   "index_patterns": [
     "audit"
@@ -55,7 +55,7 @@ curl -X PUT "localhost:9200/_template/template_1" -H 'Content-Type: application/
 '
 
 curl -X POST -H "Content-Type: application/json" \
-http://localhost:8083/connectors \
+http://elasticsearch:8083/connectors \
   -d '{
  "name": "elasticsearch-sink",
   "config": {
@@ -73,5 +73,22 @@ http://localhost:8083/connectors \
     "connection.url": "http://elasticsearch:9200",
     "type.name": "kafka-connect",
     "name": "elasticsearch-sink"
+  }
+}'
+
+curl -X POST -H "Content-Type: application/json" \
+http://elasticsearch:8083/connectors \
+  -d '{
+ "name": "pre-knitware-es-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+    "tasks.max": "1",
+    "topics": "SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID",
+    "key.ignore": "true",
+    "topic.schema.ignore":"true",
+    "schema.ignore":"true",
+    "connection.url": "http://elasticsearch:9200",
+    "type.name": "kafka-connect",
+    "name": "pre-knitware-es-sink"
   }
 }'
