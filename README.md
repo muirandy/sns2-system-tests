@@ -285,14 +285,14 @@ curl -X GET "localhost:9200/audit/_search?q=*&pretty"
 
 ##To search for the order id 2370787351871460436:
 ```
-curl -X GET "localhost:9200/audit/_search" -H 'Content-Type: application/json' -d'
+curl -X GET "localhost:9200/audit/_search?pretty" -H 'Content-Type: application/json' -d'
 {
   "query": { "match": { "ORDER_ID": "2370787351871460436" } }
 }
 '
-curl -X GET "localhost:9200/sink_modify_voip_instructions_with_switch_id/_search?pretty" -H 'Content-Type: application/json' -d'
+curl -X GET "localhost:9200/audit/_search?pretty" -H 'Content-Type: application/json' -d'
 {
-  "query": { "match": { "ORDER_ID": "1706479302350894886" } }
+  "query": { "match": { "TRACE_ID": "3cf7b04557e1ccc9" } }
 }
 '
 ```
