@@ -295,6 +295,11 @@ curl -X GET "localhost:9200/audit/_search?pretty" -H 'Content-Type: application/
   "query": { "match": { "TRACE_ID": "3cf7b04557e1ccc9" } }
 }
 '
+curl -X GET "localhost:9200/enriched.modification.instructions.with.dn/_search?pretty" -H 'Content-Type: application/json' -d'
+{
+  "query": { "match": { "traceId": "ad1c46a6e7c649c6" } }
+}
+'
 ```
 
 ##To delete elasticsearch connector:
