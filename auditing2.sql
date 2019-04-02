@@ -1,5 +1,6 @@
 INSERT into AUDIT
-SELECT ROWKEY as "ORDER_ID",
+SELECT TRACE_ID as "TRACE_ID",
+ROWKEY as "ORDER_ID",
 TIMESTAMPTOSTRING(ROWTIME, 'yyyy-MM-dd HH:mm:ss.SSS') as "TIMESTAMP",
 'ParsedJsonToModifyVoiceFeaturesMessage' as "EVENT",
 '' as "ASSOCIATION"

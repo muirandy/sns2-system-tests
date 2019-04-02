@@ -5,7 +5,8 @@ import com.structurizr.api.StructurizrClient
 import com.structurizr.model.{InteractionStyle, Tags}
 import com.structurizr.view.{Routing, Shape}
 
-object Structurizr extends App {
+//object Structurizr extends App {
+object Structurizr {
 
   private val WORKSPACE_ID = 43191
   // Don't push the real values for these!
@@ -46,7 +47,7 @@ object Structurizr extends App {
   val serviceEnricher = mySoftwareSystem.addContainer("Service Enrichment", "Enriches message with DN", "Scala")
   serviceEnricher.addTags(MICROSERVICE_TAG)
 
-  val enrichedModificationInstructionsWithServiceTopic = mySoftwareSystem.addContainer("enriched.modification.instructions.with.service", "Modify Voice message enhanced with DN", "Kafka, JSON")
+  val enrichedModificationInstructionsWithServiceTopic = mySoftwareSystem.addContainer("enriched.modification.instructions.with.dn", "Modify Voice message enhanced with DN", "Kafka, JSON")
   enrichedModificationInstructionsWithServiceTopic.addTags(KAFKA_TOPIC_TAG)
 
   val ksqlSwitchEnhancerStream = mySoftwareSystem.addContainer("Switch Enrichment", "Joins switchId into Modify Voice Features", "KSQL")

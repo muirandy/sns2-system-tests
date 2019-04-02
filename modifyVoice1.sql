@@ -1,4 +1,6 @@
-CREATE STREAM INSTRUCTIONS_STREAM_1 (transaction STRUCT <
+CREATE STREAM INSTRUCTIONS_STREAM_1 (
+traceId VARCHAR,
+transaction STRUCT <
   "operatorId" VARCHAR,
   "instruction" STRUCT <
     "order" STRUCT <

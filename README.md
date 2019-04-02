@@ -108,7 +108,7 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic services --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic RAW_VOIP_INSTRUCTIONS --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic enriched.modification.instructions --from-beginning
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic enriched.modification.instructions.with.service --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic enriched.modification.instructions.with.dn --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic AUDIT --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --property print.key=true --topic switch.modification.instructions --from-beginning
@@ -121,7 +121,40 @@ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic incoming.op.m
 
 ##Reset topic(s) for a specific app:
 ```
-bin/kafka-streams-application-reset.sh --application-id sns-modify-enricher --bootstrap-servers localhost:9092,localhost:9093,localhost:9094 --input-topics services,modify.op.msgs
+bin/kafka-streams-application-reset.sh --application-id sns-modify-enricher --bootstrap-servers localhost:9092,localhost:9093,localhost:9094 --input-topics services,RAW_VOIP_INSTRUCTIONS
+```
+
+##Examine a topic setup:
+```
+bin/kafka-topics.sh --zookeeper localhost:2181 --topic AUDIT --describe
+```
+
+##Change the partitions on a topic:
+```
+./bin/kafka-topics.sh --alter --zookeeper localhost:2181 --topic AUDIT --partitions 4
+```
+
+##Change the replication factor of a topic:
+First, create a json file describing what you want, eg:
+```json
+{"version":1,
+ "partitions":[
+    {"topic":"AUDIT",
+     "partition":0,
+     "replicas":[0,1,2]
+    }
+  ]
+}
+```
+Note that the "replicas" value should hold the ids of the brokers you want the topic replicated on.
+
+Now, change the replication factor:
+```
+bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 --reassignment-json-file repl.json --execute
+```
+Check that it has completed:
+```
+bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 --reassignment-json-file repl.json --verify
 ```
 
 #KSQL - General Info
@@ -255,6 +288,11 @@ curl -X GET "localhost:9200/audit/_search?q=*&pretty"
 curl -X GET "localhost:9200/audit/_search" -H 'Content-Type: application/json' -d'
 {
   "query": { "match": { "ORDER_ID": "2370787351871460436" } }
+}
+'
+curl -X GET "localhost:9200/sink_modify_voip_instructions_with_switch_id/_search?pretty" -H 'Content-Type: application/json' -d'
+{
+  "query": { "match": { "ORDER_ID": "1706479302350894886" } }
 }
 '
 ```
