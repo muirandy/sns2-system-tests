@@ -9,6 +9,14 @@ This project holds:
 2) Docker scripts to spin up kafka
 3) Useful scripts & instructions!
 
+#New round these parts? Some resources:
+##Book bundle from Confluent:
+https://www.confluent.io/apache-kafka-stream-processing-book-bundle
+##Apache Kafka Quickstart:
+https://kafka.apache.org/quickstart
+
+
+
 #Instructions
 The first thing you need is an installation of Apache Kafka. We're not using the Confluent platform here.
 You can install Kafka natively onto your OS, or you an run it within Docker. The latter is preferred as its
@@ -17,9 +25,16 @@ much quicker to get up and running!
 We need the following Kafka components:
 * Zookeeper
 * Kafka servers (3)
-* Kafka connect
-* KSQL
+* Kafka connect server
+* KSQL Server
+
+And also:
 * An H2 database
+* ElasticSearch
+* Kibana
+* Grafana
+* Zipkin
+
 
 #Install KSQL in your working folder (as a sibling of other kafka projects)
 ```
@@ -69,7 +84,7 @@ The system test will show you the start and end points.
 
 
 #Kafka on your native OS
-If spinning things up in Docker isn't for you, then you've got the rest of this README to get through. Its not too bad!
+If spinning things up in Docker isn't for you, then you've got the rest of this section to get through. Its not too bad!
 
 ##Install Kafka
 This should be done in the usual way (see the Kafka website)!
@@ -88,14 +103,11 @@ bin/kafka-server-start.sh config/server.properties
 bin/kafka-server-start.sh config/server-1.properties
 bin/kafka-server-start.sh config/server-2.properties
 ```
-##Create the topics if necessary:
+
+#Useful Commands for Kafka
+##Create a topic if necessary (note that this is taken care of by either the setup.sh or doItAll.sh scripts):
 ```
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic incoming.op.msgs
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic modify.op.msgs
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic enriched.modification.instructions
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic switch.modification.instructions
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic service.events
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic RAW_VOIP_INSTRUCTIONS
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic NEW_TOPIC_NAME
 ```
 
 ##List the topics
@@ -158,7 +170,7 @@ bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 --reassignment-json-
 ```
 
 #KSQL - General Info
-##Install KSQL
+##Install KSQL (also needed for the docker based example)
 ```
 cd <kafka_installation_dir>
 cd ..
@@ -167,13 +179,13 @@ cd ksql
 mvn clean compile install -DskipTests
 ```
  
-##Start KSQL server
+##Start KSQL server (automatic using docker)
 ```
 cd config
 ../bin/ksql-server-start ksql-server.properties
 ```
 
-##Start KSQL client
+##Start KSQL client (you need this if you want to ingteract with KSQL)
 ```
 cd bin
 ./ksql http://localhost:8088
@@ -297,7 +309,7 @@ curl -X GET "localhost:9200/audit/_search?pretty" -H 'Content-Type: application/
 '
 curl -X GET "localhost:9200/enriched.modification.instructions.with.dn/_search?pretty" -H 'Content-Type: application/json' -d'
 {
-  "query": { "match": { "traceId": "ad1c46a6e7c649c6" } }
+  "query": { "match": { "traceId": "ab6377a863c2e7a4" } }
 }
 '
 ```
