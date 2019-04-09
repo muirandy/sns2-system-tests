@@ -7,10 +7,11 @@ docker exec -it ksql-cli /usr/share/ksql-scripts/enhanceVoip.sh
 
 cd ../sns-repoman-db
 ./gradlew flywayMigrate -i
-./createServicesJdbcConnector.sh
-./createSwitchServiceJdbcConnector.sh
 
 cd ../sns2-system-tests
+./kafka-connect/createServicesJdbcConnector.sh
+./kafka-connect/createSwitchServiceJdbcConnector.sh
+
 ./auditing.sh
 ./analytics.sh
 
