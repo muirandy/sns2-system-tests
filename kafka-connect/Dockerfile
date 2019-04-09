@@ -1,4 +1,6 @@
-FROM confluentinc/cp-kafka-connect:5.1.2
+FROM confluentinc/cp-kafka-connect:5.2.1
+
+ENV CONNECT_PLUGIN_PATH="/usr/share/java,/usr/share/confluent-hub-components"
 
 RUN mkdir -p /opt/kafka-connect/jars
 RUN apt-get -y install curl
