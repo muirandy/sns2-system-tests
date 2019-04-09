@@ -12,7 +12,8 @@ cd ../sns2-system-tests
 ./kafka-connect/createServicesJdbcConnector.sh
 ./kafka-connect/createSwitchServiceJdbcConnector.sh
 
-./auditing.sh
+docker exec -it ksql-cli /usr/share/ksql-scripts/auditing.sh
+
 ./analytics.sh
 
 ./grafana.sh
