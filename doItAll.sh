@@ -14,7 +14,7 @@ cd ../sns2-system-tests
 
 docker exec -it ksql-cli /usr/share/ksql-scripts/auditing.sh
 
-./analytics.sh
+./kafka-connect/analytics.sh
 
 ./grafana.sh
 ./grafanaDashboard.sh
