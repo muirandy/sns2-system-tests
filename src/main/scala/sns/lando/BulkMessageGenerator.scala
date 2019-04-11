@@ -23,7 +23,7 @@ object BulkMessageGenerator extends App {
   props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "100")
   props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
   props.put(ConsumerConfig.GROUP_ID_CONFIG, this.getClass.getName)
-
+  props.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor")
 
   val operatorIds = Seq("sky", "nowTv")
   val random = new Random
