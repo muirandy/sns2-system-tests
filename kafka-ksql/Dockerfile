@@ -1,4 +1,4 @@
-FROM confluentinc/cp-ksql-server:5.1.2
+FROM confluentinc/cp-ksql-server:5.2.1
 
 RUN mkdir -p /opt/kafka-ksql/jars
 RUN apt-get -y install curl

@@ -82,10 +82,17 @@ services:
       CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       # Assumes image is based on confluentinc/kafka-connect-datagen:latest which is pulling 5.1.1 Connect image
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-5.2.1.jar
-      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
-      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor,no.sysco.middleware.kafka.interceptor.zipkin.TracingProducerInterceptor"
+      CONNECT_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor,no.sysco.middleware.kafka.interceptor.zipkin.TracingConsumerInterceptor"
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
+      CONNECT_PRODUCER_ZIPKIN_SENDER_TYPE: "HTTP"
+      CONNECT_PRODUCER_ZIPKIN_HTTP_ENDPOINT: "http://zipkin:9411/api/v2/spans"
+      CONNECT_PRODUCER_ZIPKIN_LOCAL_SERVICE_NAME: "connect"
+      CONNECT_CONSUMER_ZIPKIN_SENDER_TYPE: "HTTP"
+      CONNECT_CONSUMER_ZIPKIN_HTTP_ENDPOINT: "http://zipkin:9411/api/v2/spans"
+      CONNECT_CONSUMER_ZIPKIN_LOCAL_SERVICE_NAME: "connect"
+
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:5.2.1
@@ -113,7 +120,7 @@ services:
       PORT: 9021
 
   ksql-server:
-    image: confluentinc/cp-ksql-server:5.2.1
+    build: kafka-ksql
     hostname: ksql-server
     container_name: ksql-server
     depends_on:
@@ -130,8 +137,12 @@ services:
       KSQL_LISTENERS: "http://0.0.0.0:8088"
       KSQL_CACHE_MAX_BYTES_BUFFERING: 0
       KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
-      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
+      KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor,no.sysco.middleware.kafka.interceptor.zipkin.TracingProducerInterceptor"
+      KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor,no.sysco.middleware.kafka.interceptor.zipkin.TracingConsumerInterceptor"
+      KSQL_ZIPKIN_SENDER_TYPE: "HTTP"
+      KSQL_ZIPKIN_HTTP_ENDPOINT: "http://zipkin:9411/api/v2/spans"
+      KSQL_ZIPKIN_LOCAL_SERVICE_NAME: "ksql-server"
+
 #    volumes:
 #      - "./setupKafka.sh:/usr/local/bin/setupKafka.sh"
 #    command:
