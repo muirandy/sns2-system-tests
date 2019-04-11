@@ -72,8 +72,10 @@ services:
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
-      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
       CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
@@ -189,11 +191,15 @@ services:
 
   h2:
     image: nemerosa/h2
+    hostname: h2
+    container_name: h2
     ports:
       - 9082:9082
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
+    hostname: elasticsearch
+    container_name: elasticsearch
     ports:
       - 9200:9200
     environment:
@@ -202,16 +208,19 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:6.6.2
+    hostname: kibana
+    container_name: kibana
+    ports:
+      - "5601:5601"
     environment:
       SERVER_NAME: kibana
       ELASTICSEARCH_URL: http://elasticsearch:9200
-    ports:
-      - "5601:5601"
     depends_on:
       - elasticsearch
 
   grafana:
     container_name: grafana
+    hostname: grafana
     image: grafana/grafana:5.2.4
     ports:
       - 3000:3000
@@ -224,6 +233,8 @@ services:
 
   zipkin:
     image: openzipkin/zipkin:2.12.6
+    hostname: zipkin
+    container_name: zipkin
     environment:
       STORAGE_TYPE: mem
       KAFKA_BOOTSTRAP_SERVERS: broker:29092
