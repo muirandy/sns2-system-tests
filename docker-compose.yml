@@ -48,10 +48,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
 
   connect:
-    image: confluentinc/kafka-connect-datagen:latest
-    build:
-      context: .
-      dockerfile: kafka-connect/Dockerfile
+    build: kafka-connect
     hostname: connect
     container_name: connect
     depends_on:
@@ -253,3 +250,8 @@ services:
       - 9411:9411
     depends_on:
       - broker
+
+networks:
+  default:
+    external:
+      name: faith

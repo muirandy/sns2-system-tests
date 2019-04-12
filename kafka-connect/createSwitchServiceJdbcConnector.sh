@@ -8,13 +8,16 @@ curl -X POST \
       "config": {
         "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
         "tasks.max": 1,
-        "connection.user": "sa",
-        "connection.url": "jdbc:h2:tcp://h2:9082/foobar",
+        "connection.user": "system",
+        "connection.password": "oracle",
+        "connection.url": "jdbc:oracle:thin:@//faithDB:1521/db1",
         "mode": "incrementing",
-        "query": "Select SERVICE_ID, SWITCH_SERVICE_ID from VOIP_SERVICE_DETAILS",
+        "query": "Select CAST (SERVICE_ID as NUMBER(8,0)) SERVICE_ID, CAST (SWITCH_SERVICE_ID as NUMBER(8,0)) SWITCH_SERVICE_ID from SERVICE_OWNER.VOIP_SERVICE_DETAILS",
         "incrementing.column.name": "SERVICE_ID",
+        "numeric.mapping":"best_fit",
         "topic.prefix": "voip-switch-services",
         "poll.interval.ms": 1000,
+        "debug": true,
         "transforms": "Rename,createKey,extractInt",
         "transforms.Rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
         "transforms.Rename.renames": "SERVICE_ID:serviceId, SWITCH_SERVICE_ID:switchServiceId",
@@ -25,4 +28,4 @@ curl -X POST \
       }
     }'
 
-#curl -X DELETE http://localhost:8083/connectors/services-connector
+#curl -X DELETE http://localhost:8083/connectors/switch-services-connector
