@@ -11,6 +11,7 @@ cd ../sns-repoman-db
 cd ../sns2-system-tests
 ./kafka-connect/createServicesJdbcConnector.sh
 ./kafka-connect/createSwitchServiceJdbcConnector.sh
+./kafka-connect/createActiveMqSourceConnector.sh
 
 docker exec -it ksql-cli /usr/share/ksql-scripts/auditing.sh
 
