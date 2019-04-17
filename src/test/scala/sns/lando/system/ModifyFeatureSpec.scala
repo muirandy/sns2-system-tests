@@ -12,7 +12,7 @@ import scala.util.Random
 
 class ModifyFeatureSpec extends FunSpec with GivenWhenThen {
 
-  private val lluStreamMessagesTopic = "incoming.op.msgs"
+  private val lluStreamMessagesTopic = "INCOMING_OP_MSGS"
   private val switchModificationTopic = "switch.modification.instructions"
   private val KafkaDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
   private val KafkaSerializer = "org.apache.kafka.common.serialization.StringSerializer"

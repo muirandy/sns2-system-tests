@@ -87,7 +87,8 @@ docker exec -it broker kafka-topics --list --zookeeper zookeeper:2181
 
 ## View the messages on the topics:
 ```
-docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic incoming.op.msgs --from-beginning
+docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic incoming.activemq --from-beginning
+docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic INCOMING_OP_MSGS --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic modify.op.msgs --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic services --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic RAW_VOIP_INSTRUCTIONS --from-beginning
@@ -100,7 +101,7 @@ docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --p
 
 ## Write directly to a topic:
 ```
-docker exec -it broker kafka-console-producer --broker-list broker:9092 --topic incoming.op.msgs
+docker exec -it broker kafka-console-producer --broker-list broker:9092 --topic INCOMING_OP_MSGS
 ```
 
 ## Reset topic(s) for a specific app:

@@ -29,7 +29,7 @@ object Structurizr {
   val snsNorth = model.addPerson("SNS North", "SNS North")
   val snsNorthAdapter = mySoftwareSystem.addContainer("SNS North Adapter", "Receives HTTP requests and hands them to kafka", "Java")
 
-  val incomingOperatorMessagesTopic = mySoftwareSystem.addContainer("incoming.op.msgs", "All messages received from SNS North in XML", "Kafka, XML")
+  val incomingOperatorMessagesTopic = mySoftwareSystem.addContainer("INCOMING_OP_MSGS", "All messages received from SNS North in XML", "Kafka, XML")
   incomingOperatorMessagesTopic.addTags(KAFKA_TOPIC_TAG)
 
   val xmlToJsonConverter = mySoftwareSystem.addContainer("XML to JSON Converter", "Turns any XML into equivalent JSON", "Scala")

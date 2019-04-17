@@ -8,7 +8,7 @@ import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, Produce
 import scala.util.Random
 
 object BulkMessageGenerator extends App {
-  private val lluStreamMessagesTopic = "incoming.op.msgs"
+  private val lluStreamMessagesTopic = "INCOMING_OP_MSGS"
   private val KafkaDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
   private val KafkaSerializer = "org.apache.kafka.common.serialization.StringSerializer"
 
