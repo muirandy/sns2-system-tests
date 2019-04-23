@@ -197,12 +197,12 @@ services:
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 
-  h2:
-    image: nemerosa/h2
-    hostname: h2
-    container_name: h2
-    ports:
-      - 9082:9082
+#  h2:
+#    image: nemerosa/h2
+#    hostname: h2
+#    container_name: h2
+#    ports:
+#      - 9082:9082
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.6.2
