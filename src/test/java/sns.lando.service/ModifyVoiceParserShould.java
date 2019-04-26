@@ -55,17 +55,20 @@ public class ModifyVoiceParserShould {
 
     @Container
     private static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer("5.2.1").withEmbeddedZookeeper()
-            .waitingFor(Wait.forLogMessage(".*started.*\\n", 1));
+                                                                                     .waitingFor(Wait.forLogMessage(".*started.*\\n", 1));
 
-    @Container
-    private GenericContainer ksqlContainer = new GenericContainer("sns2-system-tests_kafka-ksql:latest")
-            .withEnv(calculateKsqlEnvProperties())
-            .withNetwork(KAFKA_CONTAINER.getNetwork())
-            .withClasspathResourceMapping("kafka-ksql/scripts/modifyVoice.sql", "/opt/kafka-ksql/scripts/modifyVoice.sql", BindMode.READ_ONLY)
-            .waitingFor(Wait.forHttp("http://localhost:8088/"));
+//    @Container
+//    private GenericContainer ksqlContainer = new GenericContainer("sns2-system-tests_kafka-ksql:latest")
+//            .withEnv(calculateKsqlEnvProperties())
+//            .withNetwork(KAFKA_CONTAINER.getNetwork())
+//            .withClasspathResourceMapping("kafka-ksql/scripts/modifyVoice.sql", "/opt/kafka-ksql/scripts/modifyVoice.sql", BindMode.READ_ONLY)
+//            .waitingFor(Wait.forHttp("http://localhost:8088/"))
+//            .waitingFor(Wait.forLogMessage(".*INFO Server up and running.*\\n", 1));
 
     private String orderId = generateRandomString();
+
     private KafkaConsumer<String, String> consumer;
+    private GenericContainer ksqlContainer;
 
     private Map<String, String> calculateKsqlEnvProperties() {
         Map<String, String> envProperties = new HashMap<>();
@@ -79,30 +82,47 @@ public class ModifyVoiceParserShould {
         envProperties.put(ENV_KEY_KSQL_KSQL_STREAMS_REPLICATION_FACTOR, "1");
         envProperties.put("KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR", "2");
         envProperties.put("ksql.sink.partitions", "1");
+        envProperties.put("KSQL_LISTENERS", "http://0.0.0.0:8088");
+
         return envProperties;
     }
 
     @BeforeEach
     public void setup() {
         assertTrue(KAFKA_CONTAINER.isRunning());
+        createTopics();
+        startupKsql();
         assertTrue(ksqlContainer.isRunning());
+    }
+
+    private void startupKsql() {
+        try {
+            ksqlContainer = new GenericContainer("sns2-system-tests_kafka-ksql:latest")
+                    .withEnv(calculateKsqlEnvProperties())
+                    .withNetwork(KAFKA_CONTAINER.getNetwork())
+                    .withClasspathResourceMapping("kafka-ksql/scripts/modifyVoice.sql", "/opt/kafka-ksql/scripts/modifyVoice.sql", BindMode.READ_ONLY)
+                    .waitingFor(Wait.forHttp("http://localhost:8088/"))
+                    .waitingFor(Wait.forLogMessage(".*INFO Server up and running.*\\n", 1));
+            ksqlContainer.start();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @AfterEach
     public void tearDown() {
         System.out.println("Kafka Logs = " + KAFKA_CONTAINER.getLogs());
         System.out.println("Converter Logs = " + ksqlContainer.getLogs());
+        ksqlContainer.stop();
     }
 
     @Test
     public void convertsAnyXmlToJson() throws ExecutionException, InterruptedException {
 
-        createTopics();
+        Thread.sleep(1000);
 
-        //when
         writeXmlToInputTopic();
 
-        //then
         assertKafkaMessageEquals();
     }
 
@@ -122,7 +142,7 @@ public class ModifyVoiceParserShould {
 
     private String formatExpectedValue(String orderId) {
         return String.format(
-                "{\"TRACE_ID\":\"744287cadd425099\",\"OPERATOR_ID\":\"sky\",\"OPERATOR_ORDER_ID\":\"SogeaVoipModify_-8090217316078276926\",\"ORDER_ID\":\"%s\",\"SERVICE_ID\":\"31642339\",\"FEATURES\":[{\"code\":\"CallerDisplay\"},{\"code\":\"RingBack\"},{\"code\":\"ChooseToRefuse\"}]}",
+                "{\"TRACE_ID\":\"${json-unit.ignore}\",\"OPERATOR_ID\":\"sky\",\"OPERATOR_ORDER_ID\":\"SogeaVoipModify_-9156304217878863645\",\"ORDER_ID\":\"%s\",\"SERVICE_ID\":\"31642339\",\"FEATURES\":[{\"code\":\"CallerDisplay\"},{\"code\":\"RingBack\"},{\"code\":\"ChooseToRefuse\"}]}",
                 orderId
         );
     }
@@ -206,7 +226,6 @@ public class ModifyVoiceParserShould {
 
     private Properties getKafkaProperties() {
         String bootstrapServers = KAFKA_CONTAINER.getBootstrapServers();
-        //        String bootstrapServers = KAFKA_CONTAINER.getNetworkAliases().get(0) + ":9092";
 
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
