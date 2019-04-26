@@ -5,9 +5,10 @@ import org.apache.kafka.clients.admin.CreateTopicsOptions;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.KafkaFuture;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.BindMode;
@@ -23,6 +24,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -40,11 +42,12 @@ public abstract class KsqlServiceTestBase {
     private static final String ENV_KEY_KSQL_KSQL_STREAMS_REPLICATION_FACTOR = "KSQL_KSQL_STREAMS_REPLICATION_FACTOR";
     private static final String KAFKA_DESERIALIZER = "org.apache.kafka.common.serialization.StringDeserializer";
     private static final String KAFKA_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
+    private static final String KSQL_SCRIPT_CONTAINER_PATH = "/opt/kafka-ksql/scripts/ksqlScript.sql";
     @Container
     protected GenericContainer ksqlContainer = new GenericContainer("sns2-system-tests_kafka-ksql:latest")
             .withEnv(calculateKsqlEnvProperties())
             .withNetwork(KAFKA_CONTAINER.getNetwork())
-            .withClasspathResourceMapping(getPathToKsqlScript(), "/opt/kafka-ksql/scripts/ksqlScript.sql", BindMode.READ_ONLY)
+            .withClasspathResourceMapping(getPathToKsqlScript(), KSQL_SCRIPT_CONTAINER_PATH, BindMode.READ_ONLY)
             .waitingFor(Wait.forHttp("http://localhost:8088/"))
             .waitingFor(Wait.forLogMessage(".*INFO Server up and running.*\\n", 1));
 
@@ -55,7 +58,7 @@ public abstract class KsqlServiceTestBase {
 
         Map<String, String> envProperties = new HashMap<>();
         envProperties.put(ENV_KEY_KSQL_KSQL_SERVICE_ID, this.getClass().getName());
-        envProperties.put(ENV_KEY_KSQL_KSQL_QUERIES_FILE, "/opt/kafka-ksql/scripts/ksqlScript.sql");
+        envProperties.put(ENV_KEY_KSQL_KSQL_QUERIES_FILE, KSQL_SCRIPT_CONTAINER_PATH);
         envProperties.put(ENV_KEY_KSQL_BOOTSTRAP_SERVERS, KAFKA_CONTAINER.getNetworkAliases().get(0) + ":9092");
         envProperties.put(ENV_KEY_KAFKA_BROKER_SERVER, KAFKA_CONTAINER.getNetworkAliases().get(0));
         envProperties.put(ENV_KEY_KAFKA_BROKER_PORT, "" + 9092);
@@ -72,9 +75,7 @@ public abstract class KsqlServiceTestBase {
     private void createTopics() {
         AdminClient adminClient = AdminClient.create(getKafkaProperties());
 
-        List<NewTopic> newTopics = getTopicNames();
-
-        CreateTopicsResult createTopicsResult = adminClient.createTopics(newTopics, new CreateTopicsOptions().timeoutMs(10000));
+        CreateTopicsResult createTopicsResult = adminClient.createTopics(getTopics(), new CreateTopicsOptions().timeoutMs(1000));
         Map<String, KafkaFuture<Void>> futureResults = createTopicsResult.values();
         futureResults.values().forEach(f -> {
             try {
@@ -105,7 +106,13 @@ public abstract class KsqlServiceTestBase {
         return props;
     }
 
-    protected abstract List<NewTopic> getTopicNames();
+    protected List<NewTopic> getTopics() {
+        return getTopicNames().stream()
+                              .map(n -> new NewTopic(n, 1, (short) 1))
+                              .collect(Collectors.toList());
+    }
+
+    protected abstract List<String> getTopicNames();
 
     @BeforeEach
     public void setup() {
@@ -131,5 +138,19 @@ public abstract class KsqlServiceTestBase {
         System.out.println("Kafka Logs = " + KAFKA_CONTAINER.getLogs());
         System.out.println("Converter Logs = " + ksqlContainer.getLogs());
     }
+
+    protected void writeStringToInputTopic() throws InterruptedException, ExecutionException {
+        new KafkaProducer<String, String>(getKafkaProperties()).send(createProducerRecord()).get();
+    }
+
+    protected ProducerRecord createProducerRecord() {
+        return new ProducerRecord(getInputTopicName(), createKeyForInputMessage(), createInputMessage());
+    }
+
+    protected abstract String getInputTopicName();
+
+    protected abstract String createKeyForInputMessage();
+
+    protected abstract String createInputMessage();
 
 }

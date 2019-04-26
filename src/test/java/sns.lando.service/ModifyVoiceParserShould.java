@@ -1,14 +1,11 @@
 package sns.lando.service;
 
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -39,14 +36,11 @@ public class ModifyVoiceParserShould extends KsqlServiceTestBase {
     private KafkaConsumer<String, String> consumer;
 
     @Override
-    protected List<NewTopic> getTopicNames() {
-        NewTopic xmlTopic = new NewTopic(ModifyVoiceParserShould.INPUT_TOPIC, 1, (short) 1);
-        NewTopic jsonTopic = new NewTopic(ModifyVoiceParserShould.OUTPUT_TOPIC, 1, (short) 1);
-
-        List<NewTopic> newTopics = new ArrayList<>();
-        newTopics.add(xmlTopic);
-        newTopics.add(jsonTopic);
-        return newTopics;
+    protected List<String> getTopicNames() {
+        List<String> topicNames = new ArrayList<>();
+        topicNames.add(INPUT_TOPIC);
+        topicNames.add(OUTPUT_TOPIC);
+        return topicNames;
     }
 
     @Test
@@ -57,14 +51,21 @@ public class ModifyVoiceParserShould extends KsqlServiceTestBase {
     }
 
     private void writeXmlToInputTopic() throws InterruptedException, ExecutionException {
-        new KafkaProducer<String, String>(getKafkaProperties()).send(createKafkaProducerRecord(orderId)).get();
+        writeStringToInputTopic();
     }
 
-    private ProducerRecord createKafkaProducerRecord(String orderId) {
-        return new ProducerRecord(INPUT_TOPIC, orderId, createMessage(orderId));
+    @Override
+    protected String getInputTopicName() {
+        return INPUT_TOPIC;
     }
 
-    private String createMessage(String orderId) {
+    @Override
+    protected String createKeyForInputMessage() {
+        return orderId;
+    }
+
+    @Override
+    protected String createInputMessage() {
         return String.format(
                 "{\n" +
                         "  \"transaction\":{\n" +
