@@ -44,7 +44,7 @@ public abstract class KsqlServiceTestBase {
     private static final String KAFKA_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
     private static final String KSQL_SCRIPT_CONTAINER_PATH = "/opt/kafka-ksql/scripts/ksqlScript.sql";
     @Container
-    protected GenericContainer ksqlContainer = new GenericContainer("sns2-system-tests_kafka-ksql:latest")
+    protected GenericContainer ksqlContainer = new GenericContainer("sns2-system-tests_ksql-server:latest")
             .withEnv(calculateKsqlEnvProperties())
             .withNetwork(KAFKA_CONTAINER.getNetwork())
             .withClasspathResourceMapping(getPathToKsqlScript(), KSQL_SCRIPT_CONTAINER_PATH, BindMode.READ_ONLY)
@@ -79,7 +79,7 @@ public abstract class KsqlServiceTestBase {
         Map<String, KafkaFuture<Void>> futureResults = createTopicsResult.values();
         futureResults.values().forEach(f -> {
             try {
-                f.get(1000, TimeUnit.MILLISECONDS);
+                f.get(5000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
