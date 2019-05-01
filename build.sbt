@@ -19,3 +19,8 @@ libraryDependencies += "io.confluent" % "monitoring-interceptors" % "5.2.1"
 
 libraryDependencies += "com.goyeau" %% "kafka-streams-circe" % "0.5"
 libraryDependencies += "com.structurizr" % "structurizr-client" % "1.3.0"
+
+libraryDependencies += "com.dimafeng" %% "testcontainers-scala" % "0.24.0" % "test"
+libraryDependencies += "org.testcontainers" % "kafka" % "1.11.1" % Test
+libraryDependencies += "org.testcontainers" % "junit-jupiter" % "1.11.1" % Test
+libraryDependencies += "net.javacrumbs.json-unit" % "json-unit" % "2.6.1" % Test
