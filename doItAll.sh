@@ -2,7 +2,7 @@
 
 ./setupKafka.sh
 
-./kafka-ksql/scripts/modifyVoice.sh
+./ksql-scripts/modifyVoice.sh
 ./enhanceVoip.sh
 
 cd ../sns-repoman-db
