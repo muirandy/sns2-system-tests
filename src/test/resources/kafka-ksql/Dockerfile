@@ -1,4 +1,4 @@
-FROM confluentinc/cp-ksql-server:5.2.1
+FROM confluentinc/cp-ksql-server:5.1.2
 
 RUN mkdir -p /opt/kafka-ksql/jars
 RUN mkdir -p /opt/kafka-ksql/scripts
