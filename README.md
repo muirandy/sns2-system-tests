@@ -91,6 +91,7 @@ docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --p
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic INCOMING_OP_MSGS --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic modify.op.msgs --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic services --from-beginning
+docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic voip-switch-services --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic RAW_VOIP_INSTRUCTIONS --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic enriched.modification.instructions --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic enriched.modification.instructions.with.dn --from-beginning
@@ -140,6 +141,17 @@ docker exec -it broker kafka-reassign-partitions --zookeeper zookeeper:2181 --re
 Check that it has completed:
 ```
 docker exec -it broker kafka-reassign-partitions --zookeeper zookeeper:2181 --reassignment-json-file repl.json --verify
+```
+
+# Kafka Connect
+See the connectors:
+```
+curl localhost:8083/connectors
+```
+
+Check the status of a connector:
+```
+curl localhost:8083/connectors/services-connector/status
 ```
 
 # KSQL - General Info
