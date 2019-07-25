@@ -15,7 +15,7 @@ libraryDependencies += "org.apache.kafka" %% "kafka" % "2.2.0"
 // https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams
 libraryDependencies += "org.apache.kafka" % "kafka-streams" % "2.2.0"
 libraryDependencies += "org.apache.kafka" % "kafka-clients" % "2.2.0"
-libraryDependencies += "io.confluent" % "monitoring-interceptors" % "5.2.1"
+libraryDependencies += "io.confluent" % "monitoring-interceptors" % "5.3.0"
 
 libraryDependencies += "com.goyeau" %% "kafka-streams-circe" % "0.5"
 libraryDependencies += "com.structurizr" % "structurizr-client" % "1.3.0"

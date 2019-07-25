@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class KsqlServiceTestBase {
     @Container
-    protected static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer("5.2.1").withEmbeddedZookeeper()
+    protected static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer("5.3.0").withEmbeddedZookeeper()
                                                                                        .waitingFor(Wait.forLogMessage(".*started.*\\n", 1));
     private static final String ENV_KEY_KAFKA_BROKER_SERVER = "KAFKA_BROKER_SERVER";
     private static final String ENV_KEY_KAFKA_BROKER_PORT = "KAFKA_BROKER_PORT";
