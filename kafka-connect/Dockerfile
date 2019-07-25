@@ -1,4 +1,4 @@
-FROM confluentinc/cp-kafka-connect:5.1.2
+FROM confluentinc/cp-kafka-connect:5.3.0
 
 RUN mkdir -p /opt/kafka-connect/jars
 RUN apt-get -y install curl

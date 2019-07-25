@@ -2,7 +2,7 @@ version: '3'
 
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:5.1.2
+    image: confluentinc/cp-zookeeper:5.3.0
     ports:
       - '2181:2181'
     hostname: zookeeper
@@ -14,7 +14,7 @@ services:
         aliases:
           - zookeeper.internal-service
   kafka01.internal-service:
-    image: confluentinc/cp-kafka:5.1.2
+    image: confluentinc/cp-kafka:5.3.0
     depends_on:
       - zookeeper
     ports:
@@ -25,7 +25,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper.internal-service:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka01.internal-service:9092
   kafka02.internal-service:
-    image: confluentinc/cp-kafka:5.1.2
+    image: confluentinc/cp-kafka:5.3.0
     depends_on:
       - zookeeper
     ports:
@@ -36,7 +36,7 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper.internal-service:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka02.internal-service:9093
   kafka03.internal-service:
-    image: confluentinc/cp-kafka:5.1.2
+    image: confluentinc/cp-kafka:5.3.0
     depends_on:
       - zookeeper
     ports:
