@@ -12,4 +12,10 @@ RUN ln -s /opt/kafka-connect/jars/kafka-interceptor-zipkin-0.4.2.jar /usr/share/
 RUN curl -k -S "http://repo.sns.sky.com:8081/artifactory/libs-releases/com/oracle/ojdbc6/11.2.0.4/ojdbc6-11.2.0.4.jar" -o /opt/kafka-connect/jars/ojdbc6-11.2.0.4.jar
 RUN ln -s /opt/kafka-connect/jars/ojdbc6-11.2.0.4.jar /usr/share/java/kafka-connect-jdbc/
 
-
+#Debezium connectors
+SNAPSHOT_VERSION=$(curl -fSL $MAVEN_OSS_SNAPSHOT/io/debezium/debezium-connector-oracle/$DEBEZIUM_VERSION/maven-metadata.xml | awk -F'<[^>]+>' '/<extension>tar.gz<\/extension>/ {getline; print $2}'); \
+curl -fSL -o /tmp/plugin.tar.gz \
+             $MAVEN_OSS_SNAPSHOT/io/debezium/debezium-connector-oracle/$DEBEZIUM_VERSION/debezium-connector-oracle-$SNAPSHOT_VERSION-plugin.tar.gz &&\
+tar -xzf /tmp/plugin.tar.gz -C $KAFKA_CONNECT_PLUGINS_DIR && \
+rm -f /tmp/plugin.tar.gz; \
+done
