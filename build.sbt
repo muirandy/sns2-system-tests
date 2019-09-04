@@ -7,6 +7,9 @@ scalaVersion := "2.12.7"
 resolvers += "Maven Repository" at "https://mvnrepository.com/artifact/"
 resolvers += "Confluent Maven Repository" at "http://packages.confluent.io/maven/"
 
+libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.8" % Test
+libraryDependencies += "com.eclipsesource.minimal-json" % "minimal-json" % "0.9.5" % Test
+libraryDependencies += "org.apache.activemq" % "activemq-all" % "5.10.1" % Test
 libraryDependencies += "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test"
 //libraryDependencies += "org.apache.kafka" %% "kafka" % "2.1.0"
 libraryDependencies += "org.apache.kafka" %% "kafka" % "2.2.0"
@@ -24,3 +27,5 @@ libraryDependencies += "com.dimafeng" %% "testcontainers-scala" % "0.24.0" % "te
 libraryDependencies += "org.testcontainers" % "kafka" % "1.11.1" % Test
 libraryDependencies += "org.testcontainers" % "junit-jupiter" % "1.11.1" % Test
 libraryDependencies += "net.javacrumbs.json-unit" % "json-unit" % "2.6.1" % Test
+
+
