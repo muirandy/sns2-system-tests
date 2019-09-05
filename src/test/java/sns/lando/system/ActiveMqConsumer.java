@@ -7,17 +7,17 @@ import javax.jms.*;
 public class ActiveMqConsumer implements ExceptionListener {
 
     private String text = "No Text :(";
-    private String port;
+    private String endpoint;
 
-    public ActiveMqConsumer(String port) {
-        this.port = port;
+    public ActiveMqConsumer(String endpoint) {
+        this.endpoint = endpoint;
     }
 
     public String run() {
         try {
 
             // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:" + port);
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(endpoint);
 
             // Create a Connection
             Connection connection = connectionFactory.createConnection();

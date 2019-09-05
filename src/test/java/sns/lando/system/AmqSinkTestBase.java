@@ -6,11 +6,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
+@Testcontainers
 public class AmqSinkTestBase extends AmqTestBase {
 
     private static final String ACTIVE_MQ_QUEUE_NAME = "TEST.FOO";

@@ -6,42 +6,46 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Testcontainers
 public class SystemShould extends AmqSinkTestBase {
 
     private static final String SERVICES_TOPIC = "services";
     private static final String SWITCH_SERVICES_TOPIC = "voip-switch-services";
 
-    private Integer voipServiceId = 100;
+    private Integer voipServiceId = 101;
     private String directoryNumber = "0123456001";
-    private Integer voipSwitchServiceId;
+    private Integer voipSwitchServiceId = 5001;
+    private String traceyId = UUID.randomUUID().toString();
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        createNewIdsForTest();
         configureActiveMqSinkConnector();
     }
 
-    @After
-    private void createNewIdsForTest() {
+    @AfterEach
+    public void createNewIdsForTest() {
+        writeContainerLogsToStdOut();
         voipServiceId++;
         voipSwitchServiceId++;
         directoryNumber = calculateNextDirectoryNumber();
     }
 
     private String calculateNextDirectoryNumber() {
-        int current = Integer.getInteger(directoryNumber);
-        current++;
-        return "0" + current;
+        Integer dn = Integer.getInteger(directoryNumber);
+        return "0" + 1 + dn;
     }
 
     @Test
-    public void t() {
+    public void endToEnd() {
         createNewModifyFeaturesRequest();
 
         checkKnitwareRequestHasBeenSent();
@@ -113,11 +117,32 @@ public class SystemShould extends AmqSinkTestBase {
     }
 
     private void writeModifyVoipFeaturesInstructionToActiveMq() {
+        String mqPayload = buildMqPayload();
+        sendMessageToActiveMq(traceyId, mqPayload);
+    }
 
+    private String buildMqPayload() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"
+                + "<transaction receivedDate=\"2019-09-04T11:36:24\" operatorId=\"sky\" operatorTransactionId=\"op_trans_id_095025_228\" operatorIssuedDate=\"2011-06-01T09:51:12\"> \n"
+                + "  <instruction version=\"1\" type=\"PlaceOrder\"> \n"
+                + "    <order> \n"
+                + "      <type>modify</type> \n"
+                + "      <operatorOrderId>VoipModify_PUXGAN</operatorOrderId> \n"
+                + "      <orderId>38214522</orderId> \n"
+                + "    </order> \n"
+                + "    <modifyFeaturesInstruction serviceId=\"34803720\" operatorOrderId=\"VoipModify_PUXGAN\" operatorNotes=\"Test: successfullyModifyVoiceFeature\"> \n"
+                + "      <transactionHeader receivedDate=\"2019-09-04T11:36:24\" operatorId=\"sky\" operatorIssuedDate=\"2011-06-01T09:51:12\"/> \n"
+                + "      <features> \n"
+                + "        <feature code=\"CallWaiting\"/> \n"
+                + "        <feature code=\"ThreeWayCalling\"/> \n"
+                + "      </features> \n"
+                + "    </modifyFeaturesInstruction> \n"
+                + "  </instruction> \n"
+                + "</transaction> \n";
     }
 
     private void assertJmsMessageArrivedOnOutputMqQueue() {
-        ActiveMqConsumer consumer = new ActiveMqConsumer(readActiveMqPort());
+        ActiveMqConsumer consumer = new ActiveMqConsumer(getActiveMqEndpoint());
         String messageFromActiveMqQueue = consumer.run();
         assertEquals(expectedKnitwareMessage(), messageFromActiveMqQueue);
     }
@@ -131,6 +156,12 @@ public class SystemShould extends AmqSinkTestBase {
                 + "<chooseToRefuse active=\"true\"/>"
                 + "</features>"
                 + "</switchServiceModificationInstruction>";
+    }
+
+    private void writeContainerLogsToStdOut() {
+        System.out.println("Kafka Logs = " + KAFKA_CONTAINER.getLogs());
+        System.out.println("Active MQ Logs = " + ACTIVE_MQ_CONTAINER.getLogs());
+        System.out.println("Kafka Connect Logs = " + kafkaConnectContainer.getLogs());
     }
 
 }

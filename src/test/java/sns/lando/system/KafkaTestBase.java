@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 
 @Testcontainers
-abstract class KafkaTestBase {
+public abstract class KafkaTestBase {
     private static final String KAFKA_DESERIALIZER = "org.apache.kafka.common.serialization.StringDeserializer";
     private static final String KAFKA_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
 
@@ -73,8 +73,8 @@ abstract class KafkaTestBase {
         return "http://localhost:" + port + "/connectors";
     }
 
-    private String findExposedPortForInternalPort(GenericContainer activeMqContainer, int internalPort) {
-        Map<ExposedPort, Ports.Binding[]> bindings = getActiveMqBindings(activeMqContainer);
+    protected String findExposedPortForInternalPort(GenericContainer container, int internalPort) {
+        Map<ExposedPort, Ports.Binding[]> bindings = getContainerBindings(container);
         ExposedPort port = bindings.keySet().stream().filter(k -> internalPort == k.getPort())
                                    .findFirst().get();
 
@@ -83,17 +83,13 @@ abstract class KafkaTestBase {
         return binding.getHostPortSpec();
     }
 
-    private Map<ExposedPort, Ports.Binding[]> getActiveMqBindings(GenericContainer activeMqContainer) {
-        return activeMqContainer.getContainerInfo().getNetworkSettings().getPorts().getBindings();
+    private Map<ExposedPort, Ports.Binding[]> getContainerBindings(GenericContainer container) {
+        return container.getContainerInfo().getNetworkSettings().getPorts().getBindings();
     }
 
     @BeforeEach
     void setUp() {
 
-    }
-
-    protected String getActiveMqJmxEndpoint() {
-        return "tcp://" + AmqSinkTestBase.ACTIVE_MQ_CONTAINER.getNetworkAliases().get(0) + ":61616";
     }
 
     protected Properties kafkaPropertiesForProducer() {
