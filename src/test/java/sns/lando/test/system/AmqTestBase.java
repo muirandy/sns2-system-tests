@@ -1,15 +1,11 @@
-package sns.lando.system;
+package sns.lando.test.system;
 
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.Ports;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Map;
-
 @Testcontainers
-public class AmqTestBase extends KafkaTestBase {
+public abstract class AmqTestBase extends KafkaTestBase {
 
     protected static final String KEY_ACTIVE_MQ_JMX_ENDPOINT = "activemq.endpoint";
     private static final String ACTIVEMQ_IMAGE = "rmohr/activemq:latest";
@@ -26,7 +22,7 @@ public class AmqTestBase extends KafkaTestBase {
     }
 
     protected String getActiveMqJmxEndpoint() {
-        return "tcp://" + AmqSinkTestBase.ACTIVE_MQ_CONTAINER.getNetworkAliases().get(0) + ":61616";
+        return "tcp://" + ACTIVE_MQ_CONTAINER.getNetworkAliases().get(0) + ":61616";
     }
 
     private String readActiveMqPort() {

@@ -1,4 +1,4 @@
-package sns.lando.system;
+package sns.lando.test.system;
 
 import com.eclipsesource.json.JsonObject;
 import org.apache.http.HttpEntity;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 @Testcontainers
-public class AmqSinkTestBase extends AmqTestBase {
+public abstract class AmqSinkTestBase extends AmqTestBase {
 
     private static final String ACTIVE_MQ_QUEUE_NAME = "TEST.FOO";
     private static final String CONNECTOR_NAME ="banana";

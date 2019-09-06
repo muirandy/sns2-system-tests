@@ -1,12 +1,9 @@
-package sns.lando.system;
+package sns.lando.test.system;
 
 import com.eclipsesource.json.JsonObject;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -28,16 +25,17 @@ public class SystemShould extends AmqSinkTestBase {
 
     @BeforeEach
     public void setUp() {
+        super.setUp();
         configureActiveMqSinkConnector();
     }
 
-    @AfterEach
-    public void createNewIdsForTest() {
-        writeContainerLogsToStdOut();
-        voipServiceId++;
-        voipSwitchServiceId++;
-        directoryNumber = calculateNextDirectoryNumber();
-    }
+//    @AfterEach
+//    public void createNewIdsForTest() {
+//        writeContainerLogsToStdOut();
+//        voipServiceId++;
+//        voipSwitchServiceId++;
+//        directoryNumber = calculateNextDirectoryNumber();
+//    }
 
     private String calculateNextDirectoryNumber() {
         Integer dn = Integer.getInteger(directoryNumber);
@@ -54,10 +52,6 @@ public class SystemShould extends AmqSinkTestBase {
     protected void createNewModifyFeaturesRequest() {
         createAnExistingVoipService();
         modifyVoipFeatures();
-    }
-
-    protected void checkKnitwareRequestHasBeenSent() {
-        assertJmsMessageArrivedOnOutputMqQueue();
     }
 
     private void createAnExistingVoipService() {
@@ -80,6 +74,10 @@ public class SystemShould extends AmqSinkTestBase {
     @NotNull
     private KafkaProducer<String, String> getStringStringKafkaProducer() {
         return new KafkaProducer<>(kafkaPropertiesForProducer());
+    }
+
+    protected void checkKnitwareRequestHasBeenSent() {
+        assertJmsMessageArrivedOnOutputMqQueue();
     }
 
     private String buildServiceKey() {
@@ -142,7 +140,7 @@ public class SystemShould extends AmqSinkTestBase {
     }
 
     private void assertJmsMessageArrivedOnOutputMqQueue() {
-        ActiveMqConsumer consumer = new ActiveMqConsumer(getActiveMqEndpoint());
+        ActiveMqConsumer consumer = new ActiveMqConsumer(getActiveMqJmxEndpoint());
         String messageFromActiveMqQueue = consumer.run();
         assertEquals(expectedKnitwareMessage(), messageFromActiveMqQueue);
     }

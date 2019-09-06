@@ -1,4 +1,4 @@
-package sns.lando.system;
+package sns.lando.test.system;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 

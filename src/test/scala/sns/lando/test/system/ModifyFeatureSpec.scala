@@ -1,4 +1,4 @@
-package sns.lando.system
+package sns.lando.test.system
 
 import java.time.Duration
 import java.util.{Collections, Properties, UUID}

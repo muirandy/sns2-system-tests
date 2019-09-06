@@ -1,4 +1,4 @@
-package sns.lando.system.kafka
+package sns.lando.test.system.kafka
 
 import java.util.Properties
 

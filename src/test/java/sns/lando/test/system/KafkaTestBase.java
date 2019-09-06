@@ -1,4 +1,4 @@
-package sns.lando.system;
+package sns.lando.test.system;
 
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.Ports;
