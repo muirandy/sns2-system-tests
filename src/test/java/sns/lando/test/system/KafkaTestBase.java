@@ -36,7 +36,7 @@ public abstract class KafkaTestBase {
             .waitingFor(Wait.forLogMessage(".*Finished starting connectors and tasks.*\\n", 1));
 
     private File getDockerfileFile() {
-        return new File("./Dockerfile");
+        return new File("./kafka-connect/Dockerfile");
     }
 
     private Map<String, String> calculateConnectEnvProperties() {

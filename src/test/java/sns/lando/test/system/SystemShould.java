@@ -3,6 +3,7 @@ package sns.lando.test.system;
 import com.eclipsesource.json.JsonObject;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -29,13 +30,13 @@ public class SystemShould extends AmqSinkTestBase {
         configureActiveMqSinkConnector();
     }
 
-//    @AfterEach
-//    public void createNewIdsForTest() {
-//        writeContainerLogsToStdOut();
-//        voipServiceId++;
-//        voipSwitchServiceId++;
-//        directoryNumber = calculateNextDirectoryNumber();
-//    }
+    @AfterEach
+    public void createNewIdsForTest() {
+        writeContainerLogsToStdOut();
+        voipServiceId++;
+        voipSwitchServiceId++;
+        directoryNumber = calculateNextDirectoryNumber();
+    }
 
     private String calculateNextDirectoryNumber() {
         Integer dn = Integer.getInteger(directoryNumber);
