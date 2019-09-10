@@ -66,6 +66,9 @@ Add the following entries to your hosts file:
 ```
 docker-compose up
 ```
+# Clone sns-repoman-db project in your working folder
+sns-repoman-db
+
 Once the brokers have calmed down after starting (ie logs are a bit stable!), run this script:
 ```
 ./doItall.sh
@@ -82,7 +85,10 @@ In this project, run ModifyFeatureSpec. It should go green!
 By inspecting the projects, you should be able to tell what topics are involved.
 The system test will show you the start and end points.
 
-
+## To shut it all down later
+```
+docker-compose down
+```
 # Kafka on your native OS
 If spinning things up in Docker isn't for you, then you've got the rest of this section to get through. Its not too bad!
 
@@ -97,7 +103,7 @@ Replace the config directory of Kafka with https://github.com/muirandy/sns2-kafk
 
 ## How to start Kafka by hand:
 ```
-cd kafka_2.11-2.1.0
+cd kafka_2.12-2.1.0
 bin/zookeeper-server-start.sh config/zookeeper.properties
 bin/kafka-server-start.sh config/server.properties
 bin/kafka-server-start.sh config/server-1.properties
