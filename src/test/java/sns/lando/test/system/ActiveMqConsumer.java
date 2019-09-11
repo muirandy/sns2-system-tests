@@ -6,7 +6,7 @@ import javax.jms.*;
 
 public class ActiveMqConsumer implements ExceptionListener {
 
-    private String text = "No Text :(";
+    private String text = null;
     private String endpoint;
 
     public ActiveMqConsumer(String endpoint) {

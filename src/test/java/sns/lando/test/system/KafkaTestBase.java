@@ -2,6 +2,11 @@ package sns.lando.test.system;
 
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.Ports;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,9 +18,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 @Testcontainers
 public abstract class KafkaTestBase {
@@ -30,13 +38,14 @@ public abstract class KafkaTestBase {
     @Container
     protected GenericContainer kafkaConnectContainer = new GenericContainer(
             new ImageFromDockerfile()
-                    .withFileFromFile("Dockerfile", getDockerfileFile()))
+                    .withFileFromClasspath("confluentinc-kafka-connect-activemq-5.3.0.zip", "kafka-connect/confluentinc-kafka-connect-activemq-5.3.0.zip")
+                    .withFileFromClasspath("Dockerfile", "kafka-connect/Dockerfile"))
             .withEnv(calculateConnectEnvProperties())
             .withNetwork(KAFKA_CONTAINER.getNetwork())
             .waitingFor(Wait.forLogMessage(".*Finished starting connectors and tasks.*\\n", 1));
 
     private File getDockerfileFile() {
-        return new File("./kafka-connect/Dockerfile");
+        return new File("kafka-connect/Dockerfile");
     }
 
     private Map<String, String> calculateConnectEnvProperties() {
@@ -57,7 +66,7 @@ public abstract class KafkaTestBase {
         properties.put("CONNECT_OFFSET_STORAGE_TOPIC", "docker-connect-offsets");
         properties.put("CONNECT_STATUS_STORAGE_TOPIC", "docker-connect-status");
         properties.put("CONNECT_REST_ADVERTISED_HOST_NAME", "connect");
-        properties.put("CONNECT_PLUGIN_PATH", "/usr/share/java/kafka-amq2");
+        properties.put("CONNECT_PLUGIN_PATH", "/usr/share/java");
 
 //        createKafkaTopics();
 
@@ -108,5 +117,17 @@ public abstract class KafkaTestBase {
 
     protected <K,V> ProducerRecord createProducerRecord(String topicName, K key, V message) {
         return new ProducerRecord<K,V>(topicName, key, message);
+    }
+
+    protected void createKafkaConnector(String kafkaConnectorPayload) {
+        HttpPost httpPost = new HttpPost(getUriForConnectEndpoint());
+        HttpEntity httpEntity = new StringEntity(kafkaConnectorPayload, APPLICATION_JSON);
+
+        httpPost.setEntity(httpEntity);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            httpClient.execute(httpPost).close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

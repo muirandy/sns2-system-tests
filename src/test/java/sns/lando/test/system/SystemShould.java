@@ -4,6 +4,7 @@ import com.eclipsesource.json.JsonObject;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -14,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
-public class SystemShould extends AmqSinkTestBase {
+public class SystemShould extends AmqSourceTestBase {
 
     private static final String SERVICES_TOPIC = "services";
     private static final String SWITCH_SERVICES_TOPIC = "voip-switch-services";
@@ -27,6 +28,7 @@ public class SystemShould extends AmqSinkTestBase {
     @BeforeEach
     public void setUp() {
         super.setUp();
+        configureActiveMqSourceConnector();
         configureActiveMqSinkConnector();
     }
 
@@ -141,7 +143,7 @@ public class SystemShould extends AmqSinkTestBase {
     }
 
     private void assertJmsMessageArrivedOnOutputMqQueue() {
-        ActiveMqConsumer consumer = new ActiveMqConsumer(getActiveMqJmxEndpoint());
+        ActiveMqConsumer consumer = new ActiveMqConsumer(getActiveMqEndpoint());
         String messageFromActiveMqQueue = consumer.run();
         assertEquals(expectedKnitwareMessage(), messageFromActiveMqQueue);
     }

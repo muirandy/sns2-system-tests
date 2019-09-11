@@ -10,12 +10,14 @@ public abstract class AmqTestBase extends KafkaTestBase {
     protected static final String KEY_ACTIVE_MQ_JMX_ENDPOINT = "activemq.endpoint";
     private static final String ACTIVEMQ_IMAGE = "rmohr/activemq:latest";
     private static final int ACTIVE_MQ_JMS_PORT = 61616;
+    private static final int ACTIVE_MQ_ADMIN_CONSOLE_PORT = 8161;
     private static final String ACTIVE_MQ_INCOMING_QUEUE = "ColliderToCujo";
 
     @Container
     protected static final GenericContainer ACTIVE_MQ_CONTAINER = new GenericContainer(ACTIVEMQ_IMAGE)
             .withNetwork(KAFKA_CONTAINER.getNetwork())
-            .withExposedPorts(ACTIVE_MQ_JMS_PORT);
+            .withNetworkAliases("activeMq")
+            .withExposedPorts(ACTIVE_MQ_JMS_PORT, ACTIVE_MQ_ADMIN_CONSOLE_PORT);
 
     protected String getActiveMqEndpoint() {
         return "tcp://localhost:" + readActiveMqPort();
