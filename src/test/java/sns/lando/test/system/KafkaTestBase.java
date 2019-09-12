@@ -33,12 +33,13 @@ public abstract class KafkaTestBase {
 
     @Container
     protected static final KafkaContainer KAFKA_CONTAINER = new KafkaContainer("5.3.0").withEmbeddedZookeeper()
+                                                                                       .withNetworkAliases("broker")
                                                                                        .waitingFor(Wait.forLogMessage(".*started.*\\n", 1));
 
     @Container
     protected GenericContainer kafkaConnectContainer = new GenericContainer(
             new ImageFromDockerfile()
-                    .withFileFromClasspath("confluentinc-kafka-connect-activemq-5.3.0.zip", "kafka-connect/confluentinc-kafka-connect-activemq-5.3.0.zip")
+//                    .withFileFromClasspath("confluentinc-kafka-connect-activemq-5.3.0.zip", "kafka-connect/confluentinc-kafka-connect-activemq-5.3.0.zip")
                     .withFileFromClasspath("Dockerfile", "kafka-connect/Dockerfile"))
             .withEnv(calculateConnectEnvProperties())
             .withNetwork(KAFKA_CONTAINER.getNetwork())
@@ -77,9 +78,17 @@ public abstract class KafkaTestBase {
         return KAFKA_CONTAINER.getNetworkAliases().get(0) + ":9092";
     }
 
+    protected String getKafkaBootstrapServersByIp() {
+        return KAFKA_CONTAINER.getContainerIpAddress() + ":9092";
+    }
+
     protected String getUriForConnectEndpoint() {
+        return "http://" + getServerForConnectEndpoint();
+    }
+
+    protected String getServerForConnectEndpoint() {
         String port = findExposedPortForInternalPort(kafkaConnectContainer, 8083);
-        return "http://localhost:" + port + "/connectors";
+        return "localhost:" + port + "/connectors";
     }
 
     protected String findExposedPortForInternalPort(GenericContainer container, int internalPort) {

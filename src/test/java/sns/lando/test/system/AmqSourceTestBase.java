@@ -2,6 +2,10 @@ package sns.lando.test.system;
 
 import com.eclipsesource.json.JsonObject;
 
+import java.io.*;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class AmqSourceTestBase extends AmqSinkTestBase {
 
     private static final String CONNECTOR_CLASS =
@@ -12,7 +16,45 @@ public class AmqSourceTestBase extends AmqSinkTestBase {
 
 
     protected void configureActiveMqSourceConnector() {
+        runConnectScript("kafka-connect/createActiveMqSourceConnector.sh",
+                getKafkaBootstrapServersByIp(),
+                getServerForConnectEndpoint(),
+                getActiveMqEndpoint()
+                );
         createKafkaConnector(getAmqConnectorPayload());
+    }
+
+    private void runConnectScript(String scriptName, String... scriptArguments) {
+        File connectorScript = new File(getClass().getClassLoader().getResource(scriptName).getFile());
+        String absolutePath = connectorScript.getAbsolutePath();
+
+        String arguments = Arrays.stream(scriptArguments)
+                               .collect(Collectors.joining(" "));
+
+        String cmd = absolutePath + " " + arguments;
+        try {
+            Process process = Runtime.getRuntime().exec(cmd);
+
+            InputStream cmdStdErr = process.getErrorStream();
+            InputStream cmdStdOut = process.getInputStream();
+
+            process.waitFor();
+
+            writeOutStreamToConsole(cmdStdOut);
+            writeOutStreamToConsole(cmdStdErr);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void writeOutStreamToConsole(InputStream cmdStdOut) throws IOException {
+        String line;
+        BufferedReader stdOut = new BufferedReader(new InputStreamReader(cmdStdOut));
+        while ((line = stdOut.readLine()) != null)
+            System.out.println(line);
+
+        cmdStdOut.close();
     }
 
     private String getAmqConnectorPayload() {
