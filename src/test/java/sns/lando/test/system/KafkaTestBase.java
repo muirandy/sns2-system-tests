@@ -17,11 +17,12 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
@@ -110,7 +111,7 @@ public abstract class KafkaTestBase {
 
     }
 
-    protected Properties kafkaPropertiesForProducer() {
+    protected static Properties kafkaPropertiesForProducer() {
         Properties props = new Properties();
         props.put("acks", "all");
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_CONTAINER.getBootstrapServers());
@@ -138,5 +139,42 @@ public abstract class KafkaTestBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void runConnectScript(String scriptName, String... scriptArguments) {
+        runShellScript(scriptName, scriptArguments);
+    }
+
+    private void runShellScript(String scriptName, String[] scriptArguments) {
+        File connectorScript = new File(getClass().getClassLoader().getResource(scriptName).getFile());
+        String absolutePath = connectorScript.getAbsolutePath();
+
+        String arguments = Arrays.stream(scriptArguments)
+                                 .collect(Collectors.joining(" "));
+
+        String cmd = absolutePath + " " + arguments;
+        try {
+            Process process = Runtime.getRuntime().exec(cmd);
+
+            InputStream cmdStdErr = process.getErrorStream();
+            InputStream cmdStdOut = process.getInputStream();
+
+            process.waitFor();
+
+            writeOutStreamToConsole(cmdStdOut);
+            writeOutStreamToConsole(cmdStdErr);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void writeOutStreamToConsole(InputStream cmdStdOut) throws IOException {
+        String line;
+        BufferedReader stdOut = new BufferedReader(new InputStreamReader(cmdStdOut));
+        while ((line = stdOut.readLine()) != null)
+            System.out.println(line);
+
+        cmdStdOut.close();
     }
 }

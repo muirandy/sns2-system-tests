@@ -2,7 +2,6 @@ package sns.lando.test.system;
 
 import com.eclipsesource.json.JsonObject;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,7 +72,6 @@ public class SystemShould extends AmqSourceTestBase {
 //        lluStreamMessagesTopicProducer.close()
     }
 
-    @NotNull
     private KafkaProducer<String, String> getStringStringKafkaProducer() {
         return new KafkaProducer<>(kafkaPropertiesForProducer());
     }

@@ -23,7 +23,14 @@ public abstract class AmqSinkTestBase extends AmqTestBase {
 
 
     protected void configureActiveMqSinkConnector() {
-        createKafkaConnector(getAmqConnectorPayload());
+//        createKafkaConnector(getAmqConnectorPayload());
+        runConnectScript("kafka-connect/createActiveMqSinkConnector.sh",
+                getKafkaBootstrapServersByIp(),
+                getServerForConnectEndpoint(),
+                getActiveMqEndpoint()
+        );
+//        createKafkaConnector(getAmqConnectorPayload());
+
     }
 
     private String getAmqConnectorPayload() {

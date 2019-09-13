@@ -21,40 +21,7 @@ public class AmqSourceTestBase extends AmqSinkTestBase {
                 getServerForConnectEndpoint(),
                 getActiveMqEndpoint()
                 );
-        createKafkaConnector(getAmqConnectorPayload());
-    }
-
-    private void runConnectScript(String scriptName, String... scriptArguments) {
-        File connectorScript = new File(getClass().getClassLoader().getResource(scriptName).getFile());
-        String absolutePath = connectorScript.getAbsolutePath();
-
-        String arguments = Arrays.stream(scriptArguments)
-                               .collect(Collectors.joining(" "));
-
-        String cmd = absolutePath + " " + arguments;
-        try {
-            Process process = Runtime.getRuntime().exec(cmd);
-
-            InputStream cmdStdErr = process.getErrorStream();
-            InputStream cmdStdOut = process.getInputStream();
-
-            process.waitFor();
-
-            writeOutStreamToConsole(cmdStdOut);
-            writeOutStreamToConsole(cmdStdErr);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void writeOutStreamToConsole(InputStream cmdStdOut) throws IOException {
-        String line;
-        BufferedReader stdOut = new BufferedReader(new InputStreamReader(cmdStdOut));
-        while ((line = stdOut.readLine()) != null)
-            System.out.println(line);
-
-        cmdStdOut.close();
+//        createKafkaConnector(getAmqConnectorPayload());
     }
 
     private String getAmqConnectorPayload() {
