@@ -8,6 +8,8 @@ echo $kafkaBroker
 echo $connectServer
 echo $mqUrl
 
+echo " --- createActiveMqSinkConnector.sh --- "
+
 payload='{
             "name": "activeMqSinkConnector",
             "config": {

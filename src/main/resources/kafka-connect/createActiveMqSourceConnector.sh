@@ -4,6 +4,8 @@ kafkaBroker=${1:-broker:29092}
 connectServer=${2:-localhost:8083/connectors}
 mqUrl=${3:-tcp://faithApps:61616}
 
+echo " --- createActiveMqSourceConnector.sh --- "
+
 echo $kafkaBroker
 echo $connectServer
 echo $mqUrl

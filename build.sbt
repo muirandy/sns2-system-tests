@@ -6,6 +6,7 @@ scalaVersion := "2.12.7"
 
 resolvers += "Maven Repository" at "https://mvnrepository.com/artifact/"
 resolvers += "Confluent Maven Repository" at "http://packages.confluent.io/maven/"
+resolvers += "Bintray Maven Repository" at "https://dl.bintray.com/palantir/releases"
 
 libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.8" % Test
 libraryDependencies += "com.eclipsesource.minimal-json" % "minimal-json" % "0.9.5" % Test
@@ -24,8 +25,12 @@ libraryDependencies += "com.goyeau" %% "kafka-streams-circe" % "0.5"
 libraryDependencies += "com.structurizr" % "structurizr-client" % "1.3.0"
 
 libraryDependencies += "com.dimafeng" %% "testcontainers-scala" % "0.24.0" % "test"
-libraryDependencies += "org.testcontainers" % "kafka" % "1.11.1" % Test
-libraryDependencies += "org.testcontainers" % "junit-jupiter" % "1.11.1" % Test
+libraryDependencies += "org.testcontainers" % "kafka" % "1.12.1" % Test
+libraryDependencies += "org.testcontainers" % "junit-jupiter" % "1.12.1" % Test
+
+//testCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.31.1'
+libraryDependencies += "com.palantir.docker.compose" % "docker-compose-rule-junit4" % "0.31.1" % Test
+
 libraryDependencies += "net.javacrumbs.json-unit" % "json-unit" % "2.6.1" % Test
 
 
