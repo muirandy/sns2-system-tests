@@ -67,7 +67,7 @@ public class EndToEnd {
     }
 
     private String getZookeeperEndpoint() {
-        return "localhost:2181";
+        return "zookeeper:2181";
     }
 
     private String getInternalNetworkKafkaBrokerEndpoint() {
