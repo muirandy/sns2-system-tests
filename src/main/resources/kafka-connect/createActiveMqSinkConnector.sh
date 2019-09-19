@@ -4,11 +4,11 @@ kafkaBroker=${1:-broker:29092}
 connectServer=${2:-localhost:8083/connectors}
 mqUrl=${3:-tcp://localhost:61616}
 
+echo " --- createActiveMqSinkConnector.sh --- "
+
 echo $kafkaBroker
 echo $connectServer
 echo $mqUrl
-
-echo " --- createActiveMqSinkConnector.sh --- "
 
 payload='{
             "name": "activeMqSinkConnector",
@@ -31,7 +31,7 @@ echo $payload
 curl -X POST \
   -H "Content-Type: application/json" \
   http://$connectServer \
-  --data '$payload'
+  --data "$payload"
 
 
 

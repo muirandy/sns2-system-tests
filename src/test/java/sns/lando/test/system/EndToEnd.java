@@ -55,6 +55,7 @@ public class EndToEnd {
         String ksqlCliContainerId = getContainerIdFromImage("confluentinc/cp-ksql-cli:5.3.0");
         String connectServerEndpoint = getConnectServerEndpoint();
         String activeMqEndpoint = getActiveMqEndpoint();
+        String elasticSearchInternalNetworkUrl = getElasticSearchInternalNetworkUrl();
 
         runShellScript("kafka/doItAll.sh",
                 zookeeperEndpoint,
@@ -62,7 +63,9 @@ public class EndToEnd {
                 kafkaBrokerContainerId,
                 ksqlCliContainerId,
                 connectServerEndpoint,
-                activeMqEndpoint);
+                activeMqEndpoint,
+                elasticSearchInternalNetworkUrl
+        );
         assertEquals(1, 1);
     }
 
@@ -71,7 +74,7 @@ public class EndToEnd {
     }
 
     private String getInternalNetworkKafkaBrokerEndpoint() {
-        return "localhost:29092";
+        return "broker:29092";
     }
 
     private String getConnectServerEndpoint() {
@@ -80,6 +83,10 @@ public class EndToEnd {
 
     private String getActiveMqEndpoint() {
         return "tcp://localhost:61616";
+    }
+
+    private String getElasticSearchInternalNetworkUrl() {
+        return "elasticsearch:9200";
     }
 
     private String getContainerIdFromImage(String imageName) {

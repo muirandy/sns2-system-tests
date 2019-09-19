@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
+connectServer=${1:-localhost:8083/connectors}
+elasticSearchInternalNetworkUrl=${2:-elasticsearch:9200}
 echo " --- analytics.sh --- "
+echo $connectServer
 
 curl -X PUT "elasticsearch:9200/_template/template_1" -H 'Content-Type: application/json' -d'
 {
@@ -57,7 +60,7 @@ curl -X PUT "elasticsearch:9200/_template/template_1" -H 'Content-Type: applicat
 '
 
 curl -X POST -H "Content-Type: application/json" \
-http://localhost:8083/connectors \
+http://$connectServer \
   -d '{
  "name": "audit-es-sink",
   "config": {
@@ -67,7 +70,7 @@ http://localhost:8083/connectors \
     "key.ignore": "true",
     "topic.schema.ignore":"true",
     "schema.ignore":"true",
-    "connection.url": "http://elasticsearch:9200",
+    "connection.url": "http://${elasticSearchInternalNetworkUrl}",
     "type.name": "kafka-connect",
     "name": "audit-es-sink"
   }
