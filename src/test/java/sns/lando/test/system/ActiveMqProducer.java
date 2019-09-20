@@ -23,7 +23,7 @@ class ActiveMqProducer {
         }
     }
 
-    void write(String message, String traceyId) {
+    void write(String message, String traceyId, int orderId) {
         ActiveMQConnectionFactory factory = createConnectionFactory(activeMqEndpoint);
         try {
             Connection connection = factory.createConnection();
@@ -32,6 +32,7 @@ class ActiveMqProducer {
             MessageProducer producer = session.createProducer(queue);
             TextMessage textMessage = session.createTextMessage(message);
             textMessage.setStringProperty("TRACEY_ID", traceyId);
+            textMessage.setStringProperty("JMSXGroupID", "" + orderId);
             producer.send(textMessage);
         } catch (JMSException e) {
             e.printStackTrace();

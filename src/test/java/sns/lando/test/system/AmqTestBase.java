@@ -48,6 +48,6 @@ public abstract class AmqTestBase extends KafkaTestBase {
     protected void sendMessageToActiveMq(String traceyId, String payload) {
         ActiveMqProducer activeMqProducer = new ActiveMqProducer(getActiveMqEndpoint(), ACTIVE_MQ_INCOMING_QUEUE);
         activeMqProducer.start();
-        activeMqProducer.write(payload, traceyId);
+        activeMqProducer.write(payload, traceyId, -123);
     }
 }

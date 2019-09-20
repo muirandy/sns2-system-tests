@@ -1,6 +1,7 @@
 package sns.lando.test.system;
 
 import com.github.dockerjava.api.model.Container;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.testcontainers.DockerClientFactory;
@@ -9,21 +10,14 @@ import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
 
-//@Testcontainers
 public class EndToEnd {
-    private static final int ZOOKEEPER_PORT = 2181;
-    private static final int KAFKA_PORT = 9092;
-    private static final int SCHEMA_REGISTRY_PORT = 8081;
-    private static final int CONNECT_PORT = 8083;
-    private static final int KSQL_PORT = 8088;
+    private static final String ACTIVE_MQ_INCOMING_QUEUE = "ColliderToCujo";
 
     private static final File dockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose.yml").getFile());
     private static final File endToEndDockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose-end-to-end.yml").getFile());
@@ -33,30 +27,27 @@ public class EndToEnd {
             new DockerComposeContainer(endToEndDockerComposeFile, dockerComposeFile)
                     .waitingFor("broker_1", Wait.forLogMessage(".*started.*\\n", 1))
                     .waitingFor("control-center_1", Wait.forLogMessage(".*INFO Starting Health Check.*\\n", 1).withStartupTimeout(Duration.ofSeconds(120)))
-//                    .waitingFor("ksql-server_1", Wait.forLogMessage(".*INFO Server up and running.*\\n", 1))
-//                    .withExposedService("zookeeper_1", ZOOKEEPER_PORT, new WaitAllStrategy().withStartupTimeout(Duration.ofSeconds(10)))
-//                    .withExposedService("broker_1", KAFKA_PORT)
-//                    .withExposedService("broker", KAFKA_PORT, Wait.forListeningPort())
-//                    .withExposedService("broker", KAFKA_PORT, Wait.forLogMessage(".*started.*\\n", 1))
-//                    .withExposedService("schema-registry_1", SCHEMA_REGISTRY_PORT, new WaitAllStrategy().withStartupTimeout(Duration.ofSeconds(10)))
-//                    .withExposedService("connect_1", CONNECT_PORT, new WaitAllStrategy().withStartupTimeout(Duration.ofSeconds(10)))
-//                    .withExposedService("ksql-server_1", KSQL_PORT, new WaitAllStrategy().withStartupTimeout(Duration.ofSeconds(10)))
-//.withLogConsumer()
             .withLocalCompose(true);
 
-    @Test
-    public void t() {
-        //File connectorScript = new File(getClass().getClassLoader().getResource(scriptName).getFile());
-        check();
+    private boolean firstRun = true;
+
+    private String traceyId = UUID.randomUUID().toString();
+    private int orderId = Math.abs(new Random().nextInt());
+
+    @Before
+    public void setup() {
+        if (firstRun)
+            doItAll();
+        firstRun = false;
     }
 
-    private void check() {
+    private void doItAll() {
         String zookeeperEndpoint = getZookeeperEndpoint();
         String kafkaBrokerEndpoint = getInternalNetworkKafkaBrokerEndpoint();
-        String kafkaBrokerContainerId = getContainerIdFromImage("confluentinc/cp-enterprise-kafka:5.3.0");
+        String kafkaBrokerContainerId = getContainerIdFromImage(KAFKA_BROKER_DOCKER_IMAGE_NAME);
         String ksqlCliContainerId = getContainerIdFromImage("confluentinc/cp-ksql-cli:5.3.0");
         String connectServerEndpoint = getConnectServerEndpoint();
-        String activeMqEndpoint = getActiveMqEndpoint();
+        String activeMqEndpoint = getActiveMqInternalEndpoint();
         String elasticSearchInternalNetworkUrl = getElasticSearchInternalNetworkUrl();
 
         runShellScript("kafka/doItAll.sh",
@@ -68,7 +59,6 @@ public class EndToEnd {
                 activeMqEndpoint,
                 elasticSearchInternalNetworkUrl
         );
-        assertEquals(1, 1);
     }
 
     private String getZookeeperEndpoint() {
@@ -79,18 +69,6 @@ public class EndToEnd {
         return "broker:29092";
     }
 
-    private String getConnectServerEndpoint() {
-        return "localhost:8083/connectors";
-    }
-
-    private String getActiveMqEndpoint() {
-        return "tcp://localhost:61616";
-    }
-
-    private String getElasticSearchInternalNetworkUrl() {
-        return "elasticsearch:9200";
-    }
-
     private String getContainerIdFromImage(String imageName) {
         Container container = getContainer(imageName).get();
         return container.getId();
@@ -99,8 +77,28 @@ public class EndToEnd {
     private Optional<Container> getContainer(String imageName) {
         List<Container> containers = DockerClientFactory.instance().client().listContainersCmd().exec();
         return containers.stream()
-                  .filter(c -> c.getImage().contains(imageName))
-                  .findAny();
+                         .filter(c -> c.getImage().contains(imageName))
+                         .findAny();
+    }
+
+    private String getConnectServerEndpoint() {
+        return "localhost:8083/connectors";
+    }
+
+    private String getActiveMqInternalEndpoint() {
+        return "tcp://activemq:61616";
+    }
+
+    private String getActiveMqExternalEndpoint() {
+        return "tcp://localhost:" + readExternalActiveMqPort();
+    }
+
+    private String readExternalActiveMqPort() {
+        return "61616";
+    }
+
+    private String getElasticSearchInternalNetworkUrl() {
+        return "elasticsearch:9200";
     }
 
     private void runShellScript(String scriptName, String... scriptArguments) {
@@ -134,5 +132,37 @@ public class EndToEnd {
             System.out.println(line);
 
         cmdStdOut.close();
+    }
+
+    @Test
+    public void t() {
+        writeMessageOntoActiveMq();
+        assertEquals(1, 1);
+    }
+
+    private void writeMessageOntoActiveMq() {
+        ActiveMqProducer activeMqProducer = new ActiveMqProducer(getActiveMqExternalEndpoint(), ACTIVE_MQ_INCOMING_QUEUE);
+        activeMqProducer.start();
+        activeMqProducer.write(buildMqPayload(), traceyId, orderId);
+    }
+
+    private String buildMqPayload() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"
+                + "<transaction receivedDate=\"2019-09-04T11:36:24\" operatorId=\"sky\" operatorTransactionId=\"op_trans_id_095025_228\" operatorIssuedDate=\"2011-06-01T09:51:12\"> \n"
+                + "  <instruction version=\"1\" type=\"PlaceOrder\"> \n"
+                + "    <order> \n"
+                + "      <type>modify</type> \n"
+                + "      <operatorOrderId>VoipModify_PUXGAN</operatorOrderId> \n"
+                + "      <orderId>" + orderId + "</orderId> \n"
+                + "    </order> \n"
+                + "    <modifyFeaturesInstruction serviceId=\"34803720\" operatorOrderId=\"VoipModify_PUXGAN\" operatorNotes=\"Test: successfullyModifyVoiceFeature\"> \n"
+                + "      <transactionHeader receivedDate=\"2019-09-04T11:36:24\" operatorId=\"sky\" operatorIssuedDate=\"2011-06-01T09:51:12\"/> \n"
+                + "      <features> \n"
+                + "        <feature code=\"CallWaiting\"/> \n"
+                + "        <feature code=\"ThreeWayCalling\"/> \n"
+                + "      </features> \n"
+                + "    </modifyFeaturesInstruction> \n"
+                + "  </instruction> \n"
+                + "</transaction> \n";
     }
 }
