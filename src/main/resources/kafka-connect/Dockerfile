@@ -15,8 +15,8 @@ RUN ln -s /opt/kafka-connect/jars/kafka-connect-amq-sink-jar-with-dependencies.j
 #RUN ln -s /opt/kafka-connect/jars/h2-1.4.197.jar /usr/share/java/kafka-connect-jdbc/
 
 #Zipkin
-#RUN curl -k -S "http://central.maven.org/maven2/no/sysco/middleware/kafka/kafka-interceptor-zipkin/0.4.2/kafka-interceptor-zipkin-0.4.2.jar" -o /opt/kafka-connect/jars/kafka-interceptor-zipkin-0.4.2.jar
-#RUN ln -s /opt/kafka-connect/jars/kafka-interceptor-zipkin-0.4.2.jar /usr/share/java/monitoring-interceptors/
+RUN curl -k -S "http://central.maven.org/maven2/no/sysco/middleware/kafka/kafka-interceptor-zipkin/0.4.2/kafka-interceptor-zipkin-0.4.2.jar" -o /opt/kafka-connect/jars/kafka-interceptor-zipkin-0.4.2.jar
+RUN ln -s /opt/kafka-connect/jars/kafka-interceptor-zipkin-0.4.2.jar /usr/share/java/monitoring-interceptors/
 
 #Oracle DB Driver
 #RUN curl -k -S "http://repo.sns.sky.com:8081/artifactory/libs-releases/com/oracle/ojdbc6/11.2.0.4/ojdbc6-11.2.0.4.jar" -o /opt/kafka-connect/jars/ojdbc6-11.2.0.4.jar
