@@ -4,6 +4,7 @@ connectServer=${1:-localhost:8083/connectors}
 elasticSearchInternalNetworkUrl=${2:-elasticsearch:9200}
 echo " --- analytics.sh --- "
 echo $connectServer
+echo $elasticSearchInternalNetworkUrl
 
 curl -X PUT "elasticsearch:9200/_template/template_1" -H 'Content-Type: application/json' -d'
 {
@@ -59,9 +60,7 @@ curl -X PUT "elasticsearch:9200/_template/template_1" -H 'Content-Type: applicat
 }
 '
 
-curl -X POST -H "Content-Type: application/json" \
-http://$connectServer \
-  -d '{
+payload='{
  "name": "audit-es-sink",
   "config": {
     "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
@@ -70,8 +69,17 @@ http://$connectServer \
     "key.ignore": "true",
     "topic.schema.ignore":"true",
     "schema.ignore":"true",
-    "connection.url": "http://${elasticSearchInternalNetworkUrl}",
+    "connection.url": "http://'
+payload+=$elasticSearchInternalNetworkUrl
+payload+='",
     "type.name": "kafka-connect",
     "name": "audit-es-sink"
   }
 }'
+
+echo "Analytics payload:"
+echo $payload
+
+curl -X POST -H "Content-Type: application/json" \
+http://$connectServer \
+  --data "$payload"
