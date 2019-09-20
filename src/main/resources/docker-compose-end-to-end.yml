@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  activemq:
+    image: rmohr/activemq:latest
+    hostname: activemq
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+
+networks:
+  default:
+    external:
+      name: faith

@@ -25,10 +25,12 @@ public class EndToEnd {
     private static final int CONNECT_PORT = 8083;
     private static final int KSQL_PORT = 8088;
 
-    private static final File file = new File(EndToEnd.class.getClassLoader().getResource("docker-compose.yml").getFile());
+    private static final File dockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose.yml").getFile());
+    private static final File endToEndDockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose-end-to-end.yml").getFile());
+    private static final String KAFKA_BROKER_DOCKER_IMAGE_NAME = "confluentinc/cp-enterprise-kafka:5.3.0";
     @ClassRule
     public static DockerComposeContainer environment =
-            new DockerComposeContainer(file)
+            new DockerComposeContainer(endToEndDockerComposeFile, dockerComposeFile)
                     .waitingFor("broker_1", Wait.forLogMessage(".*started.*\\n", 1))
                     .waitingFor("control-center_1", Wait.forLogMessage(".*INFO Starting Health Check.*\\n", 1).withStartupTimeout(Duration.ofSeconds(120)))
 //                    .waitingFor("ksql-server_1", Wait.forLogMessage(".*INFO Server up and running.*\\n", 1))
