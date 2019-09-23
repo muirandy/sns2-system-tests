@@ -8,6 +8,21 @@ services:
       - "61616:61616"
       - "8161:8161"
 
+  xmlConverter:
+    image: quarkus/quarkus-kafka-streams-xml-json-converter:latest
+    hostname: xmlconverter
+    depends_on:
+      - broker
+    environment:
+      kafka-streams.allow.auto.create.topics: "false"
+      kafka-streams.request.timeout.ms: 180000
+      KAFKA_BROKER_SERVER: broker
+      KAFKA_BROKER_PORT: 29092
+      INPUT_KAFKA_TOPIC: "INCOMING_OP_MSGS"
+      OUTPUT_KAFKA_TOPIC: "modify.op.msgs"
+      APP_NAME: "activeMqXmlToJson"
+      MODE: "xmlToJson"
+    command: dockerize -wait http://rest-proxy:8082/topics/INCOMING_OP_MSGS -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
 networks:
   default:
     external:

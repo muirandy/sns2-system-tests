@@ -17,6 +17,11 @@ services:
 #    container_name: broker
     depends_on:
       - zookeeper
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://rest-proxy:8082/topics/modify.op.msgs"]
+      interval: 50s
+      timeout: 10s
+      retries: 5
     ports:
       - "29092:29092"
       - "9092:9092"
