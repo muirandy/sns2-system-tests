@@ -34,18 +34,7 @@ jmsProperties STRUCT <
     "double" DOUBLE,
     "string" VARCHAR
   >,
-  "TraceyId" STRUCT <
-    "propertyType" VARCHAR,
-    "boolean" BOOLEAN,
-    "byte" VARCHAR,
-    "short" INTEGER,
-    "integer" INTEGER,
-    "long" BIGINT,
-    "float" DOUBLE,
-    "double" DOUBLE,
-    "string" VARCHAR
-  >,
-  "tracey-id" STRUCT <
+  "Tracey_Id" STRUCT <
     "propertyType" VARCHAR,
     "boolean" BOOLEAN,
     "byte" VARCHAR,
@@ -80,3 +69,7 @@ jmsProperties STRUCT <
   >
 >)
 WITH (KAFKA_TOPIC='incoming.activemq', VALUE_FORMAT='JSON');
+
+
+
+

@@ -1,5 +1,5 @@
 CREATE STREAM INCOMING_OP_MSGS WITH (VALUE_FORMAT='JSON') AS
 SELECT jmsProperties->"JMSXGroupID"->"string" as "ORDER_ID",
-jmsProperties->"TraceyId"->"string" as "TRACEY_ID",
+JMSPROPERTIES->"Tracey_Id"->"string" as "TRACEY_ID",
 text as "XML"
 FROM STREAM_FROM_INCOMING_ACTIVEMQ PARTITION BY ORDER_ID;

@@ -21,7 +21,7 @@ services:
       INPUT_KAFKA_TOPIC: "INCOMING_OP_MSGS"
       OUTPUT_KAFKA_TOPIC: "modify.op.msgs"
       APP_NAME: "activeMqXmlToJson"
-      MODE: "xmlToJson"
+      MODE: "mqConnector"
     command: dockerize -wait http://rest-proxy:8082/topics/INCOMING_OP_MSGS -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
 networks:
   default:
