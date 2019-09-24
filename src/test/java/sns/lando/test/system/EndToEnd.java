@@ -126,7 +126,7 @@ public class EndToEnd extends KafkaActor {
     }
 
     @Test
-    public void t() {
+    public void endToEnd() {
         givenExistingVoipService();
         writeMessageOntoActiveMq();
         assertEquals(1, 1);
