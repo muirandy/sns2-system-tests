@@ -1,27 +1,27 @@
 package sns.lando.test.system;
 
-import com.github.dockerjava.api.model.Container;
+import com.eclipsesource.json.JsonObject;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
 
-public class EndToEnd {
+public class EndToEnd extends KafkaActor {
     private static final String ACTIVE_MQ_INCOMING_QUEUE = "ColliderToCujo";
 
     private static final File dockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose.yml").getFile());
     private static final File endToEndDockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose-end-to-end.yml").getFile());
-    private static final String KAFKA_BROKER_DOCKER_IMAGE_NAME = "confluentinc/cp-enterprise-kafka:5.3.0";
     @ClassRule
     public static DockerComposeContainer environment =
             new DockerComposeContainer(endToEndDockerComposeFile, dockerComposeFile)
@@ -33,6 +33,9 @@ public class EndToEnd {
 
     private String traceyId = UUID.randomUUID().toString();
     private int orderId = Math.abs(new Random().nextInt());
+    private Long serviceId = new Random().nextLong();
+    private String directoryNumber = "011" + new Random().nextInt();
+    private Long switchServiceId = Math.abs(new Random().nextLong());
 
     @Before
     public void setup() {
@@ -67,18 +70,6 @@ public class EndToEnd {
 
     private String getInternalNetworkKafkaBrokerEndpoint() {
         return "broker:29092";
-    }
-
-    private String getContainerIdFromImage(String imageName) {
-        Container container = getContainer(imageName).get();
-        return container.getId();
-    }
-
-    private Optional<Container> getContainer(String imageName) {
-        List<Container> containers = DockerClientFactory.instance().client().listContainersCmd().exec();
-        return containers.stream()
-                         .filter(c -> c.getImage().contains(imageName))
-                         .findAny();
     }
 
     private String getConnectServerEndpoint() {
@@ -136,8 +127,38 @@ public class EndToEnd {
 
     @Test
     public void t() {
+        givenExistingVoipService();
         writeMessageOntoActiveMq();
         assertEquals(1, 1);
+    }
+
+    private void givenExistingVoipService() {
+        writeDirectlyToServiceTopic();
+        writeDirectlyToSwitchServiceTopic();
+    }
+
+    private void writeDirectlyToServiceTopic() {
+        sendMessageToKafkaTopic("services", "" + serviceId, createServicePayload());
+    }
+
+    private String createServicePayload() {
+        return new JsonObject()
+                .add("serviceId", serviceId)
+                .add("serviceSpecCode", "VoipService")
+                .add("directoryNumber", directoryNumber)
+                .toString();
+    }
+
+    private void writeDirectlyToSwitchServiceTopic() {
+        sendMessageToKafkaTopic("voip-switch-services", "" + serviceId, createSwitchServicePayload());
+    }
+
+    private String createSwitchServicePayload() {
+        return new JsonObject()
+                .add("serviceId", serviceId)
+                .add("switchServiceId", switchServiceId)
+                .toString()
+                ;
     }
 
     private void writeMessageOntoActiveMq() {
@@ -155,7 +176,7 @@ public class EndToEnd {
                 + "      <operatorOrderId>VoipModify_PUXGAN</operatorOrderId> \n"
                 + "      <orderId>" + orderId + "</orderId> \n"
                 + "    </order> \n"
-                + "    <modifyFeaturesInstruction serviceId=\"34803720\" operatorOrderId=\"VoipModify_PUXGAN\" operatorNotes=\"Test: successfullyModifyVoiceFeature\"> \n"
+                + "    <modifyFeaturesInstruction serviceId=\"" + serviceId + "\" operatorOrderId=\"VoipModify_PUXGAN\" operatorNotes=\"Test: successfullyModifyVoiceFeature\"> \n"
                 + "      <transactionHeader receivedDate=\"2019-09-04T11:36:24\" operatorId=\"sky\" operatorIssuedDate=\"2011-06-01T09:51:12\"/> \n"
                 + "      <features> \n"
                 + "        <feature code=\"CallWaiting\"/> \n"
