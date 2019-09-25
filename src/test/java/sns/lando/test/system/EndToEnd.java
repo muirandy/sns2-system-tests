@@ -36,9 +36,12 @@ public class EndToEnd {
     private Long serviceId = new Random().nextLong();
 
     private Long switchServiceId = Math.abs(new Random().nextLong());
+    private TestEnvironment testEnvironment;
 
     @Before
     public void setup() {
+        testEnvironment = new IsolatedEnvironment(serviceId, switchServiceId);
+
         if (firstRun)
             doItAll();
         firstRun = false;
@@ -133,7 +136,7 @@ public class EndToEnd {
     }
 
     private void givenExistingVoipService() {
-        new IsolatedEnvironment(serviceId, switchServiceId).givenExistingVoipService();
+        testEnvironment.givenExistingVoipService();
     }
 
     private void writeMessageOntoActiveMq() {

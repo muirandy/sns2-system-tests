@@ -9,7 +9,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-class IsolatedEnvironment {
+class IsolatedEnvironment implements TestEnvironment {
     private static final String KAFKA_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
 
     private String directoryNumber = "011" + new Random().nextInt();
@@ -21,7 +21,8 @@ class IsolatedEnvironment {
         this.switchServiceId = switchServiceId;
     }
 
-    void givenExistingVoipService() {
+    @Override
+    public void givenExistingVoipService() {
         writeDirectlyToServiceTopic();
         writeDirectlyToSwitchServiceTopic();
     }
