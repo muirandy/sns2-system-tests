@@ -1,65 +1,82 @@
 package sns.lando.test.system;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.jetbrains.annotations.NotNull;
 
 import javax.jms.*;
+import java.util.Optional;
 
 public class ActiveMqConsumer implements ExceptionListener {
 
-    private String text = null;
     private String endpoint;
 
     public ActiveMqConsumer(String endpoint) {
         this.endpoint = endpoint;
     }
 
-    public String run() {
+    Optional<TextMessage> run(String queueName) {
         try {
-
-            // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(endpoint);
-
-            // Create a Connection
-            Connection connection = connectionFactory.createConnection();
-            connection.start();
-
-            connection.setExceptionListener(this);
+            Connection connection = createConnection();
 
             Session session = createSession(connection);
 
-            // Create the destination (Topic or Queue)
-            Destination destination = session.createQueue("TEST.FOO");
+            Destination destination = getTheQueue(queueName, session);
 
-            // Create a MessageConsumer from the Session to the Topic or Queue
-            MessageConsumer consumer = session.createConsumer(destination);
+            MessageConsumer consumer = createQueueConsumer(session, destination);
 
-            // Wait for a message
-            Message message = consumer.receive(5000);
+            Message message = waitForMessage(consumer);
 
-            if (message instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage) message;
-                text = textMessage.getText();
-                System.out.println("Received: " + text);
-            } else {
+            if (message instanceof TextMessage)
+                return Optional.of((TextMessage) message);
+            else
                 System.out.println("Received: " + message);
-            }
 
-            consumer.close();
-            session.close();
-            connection.close();
+            tidyUp(connection, session, consumer);
         } catch (Exception e) {
             System.out.println("Caught: " + e);
             e.printStackTrace();
         }
 
-        return text;
+        return Optional.empty();
+    }
+
+    private Connection createConnection() throws JMSException {
+        ActiveMQConnectionFactory connectionFactory = createConnectionFactory();
+        Connection connection = connectionFactory.createConnection();
+        connection.start();
+        connection.setExceptionListener(this);
+        return connection;
+    }
+
+    @NotNull
+    private ActiveMQConnectionFactory createConnectionFactory() {
+        return new ActiveMQConnectionFactory(endpoint);
     }
 
     private Session createSession(Connection connection) throws JMSException {
         return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 
+    private Queue getTheQueue(String queueName, Session session) throws JMSException {
+        return session.createQueue(queueName);
+    }
+
+    private MessageConsumer createQueueConsumer(Session session, Destination destination) throws JMSException {
+        return session.createConsumer(destination);
+    }
+
+    private Message waitForMessage(MessageConsumer consumer) throws JMSException {
+        return consumer.receive(5000);
+    }
+
+    private void tidyUp(Connection connection, Session session, MessageConsumer consumer) throws JMSException {
+        consumer.close();
+        session.close();
+        connection.close();
+    }
+
     public synchronized void onException(JMSException ex) {
         System.out.println("JMS Exception occured.  Shutting down client.");
     }
+
 }

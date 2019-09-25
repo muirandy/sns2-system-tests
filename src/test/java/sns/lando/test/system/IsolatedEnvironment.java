@@ -4,13 +4,21 @@ import com.eclipsesource.json.JsonObject;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.xmlunit.assertj.XmlAssert;
 
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 class IsolatedEnvironment implements TestEnvironment {
     private static final String KAFKA_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
+    private static final String OUTPUT_AMQ_QUEUE = "HaloToKnitware";
 
     private String directoryNumber = "011" + new Random().nextInt();
     private Long serviceId;
@@ -78,8 +86,46 @@ class IsolatedEnvironment implements TestEnvironment {
         return new JsonObject()
                 .add("serviceId", serviceId)
                 .add("switchServiceId", switchServiceId)
-                .toString()
-                ;
+                .toString();
     }
 
+    @Override
+    public void assertFeaturesChangedOnSwitch() {
+        ActiveMqConsumer activeMqConsumer = new ActiveMqConsumer(getActiveMqExternalEndpoint());
+        Optional<TextMessage> activeMqResult = activeMqConsumer.run(OUTPUT_AMQ_QUEUE);
+        failIfEmpty(activeMqResult);
+        TextMessage textMessage = activeMqResult.get();
+        try {
+            assertPayload(textMessage.getText());
+        } catch (JMSException e) {
+            e.printStackTrace();
+            fail("Unexpected Exception:" + e);
+        }
+    }
+
+    private String getActiveMqExternalEndpoint() {
+        return "tcp://localhost:61616";
+    }
+
+    private void failIfEmpty(Optional<TextMessage> activeMqResult) {
+        assertTrue("No message found on MQ Queue " + OUTPUT_AMQ_QUEUE, activeMqResult.isPresent());
+    }
+
+    private void assertPayload(String payload) {
+        XmlAssert.assertThat(payload).and(expectedPayload())
+                 .ignoreWhitespace()
+                 .areIdentical();
+    }
+
+    private String expectedPayload() {
+        return "\"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<switchServiceModificationInstruction switchServiceId=\"16\" netstreamCorrelationId=\"$orderId\">"
+                + "<features>"
+                + "<callerDisplay active=\"true\"/>"
+                + "<ringBack active=\"true\"/>"
+                + "<chooseToRefuse active=\"true\"/>"
+                + "</features>"
+                + "</switchServiceModificationInstruction>"
+                ;
+    }
 }

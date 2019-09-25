@@ -17,7 +17,7 @@ payload='{
                 "activemq.endpoint": "'
 payload+=$mqUrl
 payload+='",
-                "activemq.queue": "target-mq-queue",
+                "activemq.queue": "HaloToKnitware",
                 "topics": "kafka-topic",
                 "kafka.bootstrap.servers": "'
 payload+=$kafkaBroker

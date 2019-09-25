@@ -13,9 +13,6 @@ import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-
-
 public class EndToEnd {
     protected static final String KAFKA_BROKER_DOCKER_IMAGE_NAME = "confluentinc/cp-enterprise-kafka:5.3.0";
     private static final String ACTIVE_MQ_INCOMING_QUEUE = "ColliderToCujo";
@@ -75,20 +72,24 @@ public class EndToEnd {
         return "broker:29092";
     }
 
+    String getContainerIdFromImage(String imageName) {
+        Container container = getContainer(imageName).get();
+        return container.getId();
+    }
+
+    private Optional<Container> getContainer(String imageName) {
+        List<Container> containers = DockerClientFactory.instance().client().listContainersCmd().exec();
+        return containers.stream()
+                         .filter(c -> c.getImage().contains(imageName))
+                         .findAny();
+    }
+
     private String getConnectServerEndpoint() {
         return "localhost:8083/connectors";
     }
 
     private String getActiveMqInternalEndpoint() {
         return "tcp://activemq:61616";
-    }
-
-    private String getActiveMqExternalEndpoint() {
-        return "tcp://localhost:" + readExternalActiveMqPort();
-    }
-
-    private String readExternalActiveMqPort() {
-        return "61616";
     }
 
     private String getElasticSearchInternalNetworkUrl() {
@@ -132,7 +133,7 @@ public class EndToEnd {
     public void endToEnd() {
         givenExistingVoipService();
         writeMessageOntoActiveMq();
-        assertEquals(1, 1);
+        assertFeaturesChangedOnSwitch();
     }
 
     private void givenExistingVoipService() {
@@ -143,6 +144,14 @@ public class EndToEnd {
         ActiveMqProducer activeMqProducer = new ActiveMqProducer(getActiveMqExternalEndpoint(), ACTIVE_MQ_INCOMING_QUEUE);
         activeMqProducer.start();
         activeMqProducer.write(buildMqPayload(), traceyId, orderId);
+    }
+
+    private String getActiveMqExternalEndpoint() {
+        return "tcp://localhost:" + readExternalActiveMqPort();
+    }
+
+    private String readExternalActiveMqPort() {
+        return "61616";
     }
 
     private String buildMqPayload() {
@@ -165,15 +174,8 @@ public class EndToEnd {
                 + "</transaction> \n";
     }
 
-    String getContainerIdFromImage(String imageName) {
-        Container container = getContainer(imageName).get();
-        return container.getId();
+    private void assertFeaturesChangedOnSwitch() {
+        testEnvironment.assertFeaturesChangedOnSwitch();
     }
 
-    private Optional<Container> getContainer(String imageName) {
-        List<Container> containers = DockerClientFactory.instance().client().listContainersCmd().exec();
-        return containers.stream()
-                         .filter(c -> c.getImage().contains(imageName))
-                         .findAny();
-    }
 }

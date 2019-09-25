@@ -12,6 +12,10 @@ libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.8" % Te
 libraryDependencies += "com.eclipsesource.minimal-json" % "minimal-json" % "0.9.5" % Test
 libraryDependencies += "org.apache.activemq" % "activemq-all" % "5.10.1" % Test
 libraryDependencies += "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test"
+libraryDependencies += "org.xmlunit" % "xmlunit-core" % "2.6.3" % Test
+libraryDependencies += "org.assertj" % "assertj-core" % "3.13.2" % Test
+libraryDependencies += "org.xmlunit" % "xmlunit-assertj" % "2.6.3" % Test
+
 //libraryDependencies += "org.apache.kafka" %% "kafka" % "2.1.0"
 libraryDependencies += "org.apache.kafka" %% "kafka" % "2.2.0"
 // https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams-scala
