@@ -16,12 +16,21 @@ class IsolatedEnvironment {
     private Long serviceId;
     private Long switchServiceId;
 
-    public IsolatedEnvironment(Long serviceId, Long switchServiceId) {
+    IsolatedEnvironment(Long serviceId, Long switchServiceId) {
         this.serviceId = serviceId;
         this.switchServiceId = switchServiceId;
     }
 
-    protected void sendMessageToKafkaTopic(String topic, String key, String value) {
+    void givenExistingVoipService() {
+        writeDirectlyToServiceTopic();
+        writeDirectlyToSwitchServiceTopic();
+    }
+
+    private void writeDirectlyToServiceTopic() {
+        sendMessageToKafkaTopic("services", "" + serviceId, createServicePayload());
+    }
+
+    private void sendMessageToKafkaTopic(String topic, String key, String value) {
         try {
             getStringStringKafkaProducer().send(createProducerRecord(topic, key, value)).get();
         } catch (InterruptedException e) {
@@ -52,25 +61,16 @@ class IsolatedEnvironment {
         return new ProducerRecord(topicName, key, value);
     }
 
-    public void invoke() {
-        writeDirectlyToServiceTopic();
-        writeDirectlyToSwitchServiceTopic();
-    }
-
-    private void writeDirectlyToServiceTopic() {
-        sendMessageToKafkaTopic("services", "" + serviceId, createServicePayload());
-    }
-
-    private void writeDirectlyToSwitchServiceTopic() {
-        sendMessageToKafkaTopic("voip-switch-services", "" + serviceId, createSwitchServicePayload());
-    }
-
     private String createServicePayload() {
         return new JsonObject()
                 .add("serviceId", serviceId)
                 .add("serviceSpecCode", "VoipService")
                 .add("directoryNumber", directoryNumber)
                 .toString();
+    }
+
+    private void writeDirectlyToSwitchServiceTopic() {
+        sendMessageToKafkaTopic("voip-switch-services", "" + serviceId, createSwitchServicePayload());
     }
 
     private String createSwitchServicePayload() {
@@ -80,4 +80,5 @@ class IsolatedEnvironment {
                 .toString()
                 ;
     }
+
 }

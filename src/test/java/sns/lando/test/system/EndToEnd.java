@@ -133,7 +133,7 @@ public class EndToEnd {
     }
 
     private void givenExistingVoipService() {
-        new IsolatedEnvironment(serviceId, switchServiceId).invoke();
+        new IsolatedEnvironment(serviceId, switchServiceId).givenExistingVoipService();
     }
 
     private void writeMessageOntoActiveMq() {
