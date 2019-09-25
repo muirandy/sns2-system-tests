@@ -1,23 +1,23 @@
 package sns.lando.test.system;
 
-import com.eclipsesource.json.JsonObject;
+import com.github.dockerjava.api.model.Container;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
 
-public class EndToEnd extends KafkaActor {
+public class EndToEnd {
+    protected static final String KAFKA_BROKER_DOCKER_IMAGE_NAME = "confluentinc/cp-enterprise-kafka:5.3.0";
     private static final String ACTIVE_MQ_INCOMING_QUEUE = "ColliderToCujo";
 
     private static final File dockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose.yml").getFile());
@@ -34,7 +34,7 @@ public class EndToEnd extends KafkaActor {
     private String traceyId = UUID.randomUUID().toString();
     private int orderId = Math.abs(new Random().nextInt());
     private Long serviceId = new Random().nextLong();
-    private String directoryNumber = "011" + new Random().nextInt();
+
     private Long switchServiceId = Math.abs(new Random().nextLong());
 
     @Before
@@ -133,32 +133,7 @@ public class EndToEnd extends KafkaActor {
     }
 
     private void givenExistingVoipService() {
-        writeDirectlyToServiceTopic();
-        writeDirectlyToSwitchServiceTopic();
-    }
-
-    private void writeDirectlyToServiceTopic() {
-        sendMessageToKafkaTopic("services", "" + serviceId, createServicePayload());
-    }
-
-    private String createServicePayload() {
-        return new JsonObject()
-                .add("serviceId", serviceId)
-                .add("serviceSpecCode", "VoipService")
-                .add("directoryNumber", directoryNumber)
-                .toString();
-    }
-
-    private void writeDirectlyToSwitchServiceTopic() {
-        sendMessageToKafkaTopic("voip-switch-services", "" + serviceId, createSwitchServicePayload());
-    }
-
-    private String createSwitchServicePayload() {
-        return new JsonObject()
-                .add("serviceId", serviceId)
-                .add("switchServiceId", switchServiceId)
-                .toString()
-                ;
+        new IsolatedEnvironment(serviceId, switchServiceId).invoke();
     }
 
     private void writeMessageOntoActiveMq() {
@@ -185,5 +160,17 @@ public class EndToEnd extends KafkaActor {
                 + "    </modifyFeaturesInstruction> \n"
                 + "  </instruction> \n"
                 + "</transaction> \n";
+    }
+
+    String getContainerIdFromImage(String imageName) {
+        Container container = getContainer(imageName).get();
+        return container.getId();
+    }
+
+    private Optional<Container> getContainer(String imageName) {
+        List<Container> containers = DockerClientFactory.instance().client().listContainersCmd().exec();
+        return containers.stream()
+                         .filter(c -> c.getImage().contains(imageName))
+                         .findAny();
     }
 }
