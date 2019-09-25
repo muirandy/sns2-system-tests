@@ -17,8 +17,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 class IsolatedEnvironment implements TestEnvironment {
+    private static final String ACTIVE_MQ_INCOMING_QUEUE = "ColliderToCujo";
+    private static final String ACTIVE_MQ_OUTGOING_QUEUE = "HaloToKnitware";
     private static final String KAFKA_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
-    private static final String OUTPUT_AMQ_QUEUE = "HaloToKnitware";
 
     private String directoryNumber = "011" + new Random().nextInt();
     private Long serviceId;
@@ -90,9 +91,40 @@ class IsolatedEnvironment implements TestEnvironment {
     }
 
     @Override
+    public void writeMessageOntoActiveMq(String traceyId, int orderId) {
+        ActiveMqProducer activeMqProducer = new ActiveMqProducer(getActiveMqExternalEndpoint(), ACTIVE_MQ_INCOMING_QUEUE);
+        activeMqProducer.start();
+        activeMqProducer.write(buildMqPayload(orderId), traceyId, orderId);
+    }
+
+    private String getActiveMqExternalEndpoint() {
+        return "tcp://localhost:61616";
+    }
+
+    private String buildMqPayload(int orderId) {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"
+                + "<transaction receivedDate=\"2019-09-04T11:36:24\" operatorId=\"sky\" operatorTransactionId=\"op_trans_id_095025_228\" operatorIssuedDate=\"2011-06-01T09:51:12\"> \n"
+                + "  <instruction version=\"1\" type=\"PlaceOrder\"> \n"
+                + "    <order> \n"
+                + "      <type>modify</type> \n"
+                + "      <operatorOrderId>VoipModify_PUXGAN</operatorOrderId> \n"
+                + "      <orderId>" + orderId + "</orderId> \n"
+                + "    </order> \n"
+                + "    <modifyFeaturesInstruction serviceId=\"" + serviceId + "\" operatorOrderId=\"VoipModify_PUXGAN\" operatorNotes=\"Test: successfullyModifyVoiceFeature\"> \n"
+                + "      <transactionHeader receivedDate=\"2019-09-04T11:36:24\" operatorId=\"sky\" operatorIssuedDate=\"2011-06-01T09:51:12\"/> \n"
+                + "      <features> \n"
+                + "        <feature code=\"CallWaiting\"/> \n"
+                + "        <feature code=\"ThreeWayCalling\"/> \n"
+                + "      </features> \n"
+                + "    </modifyFeaturesInstruction> \n"
+                + "  </instruction> \n"
+                + "</transaction> \n";
+    }
+
+    @Override
     public void assertFeaturesChangedOnSwitch() {
         ActiveMqConsumer activeMqConsumer = new ActiveMqConsumer(getActiveMqExternalEndpoint());
-        Optional<TextMessage> activeMqResult = activeMqConsumer.run(OUTPUT_AMQ_QUEUE);
+        Optional<TextMessage> activeMqResult = activeMqConsumer.run(ACTIVE_MQ_OUTGOING_QUEUE);
         failIfEmpty(activeMqResult);
         TextMessage textMessage = activeMqResult.get();
         try {
@@ -103,12 +135,8 @@ class IsolatedEnvironment implements TestEnvironment {
         }
     }
 
-    private String getActiveMqExternalEndpoint() {
-        return "tcp://localhost:61616";
-    }
-
     private void failIfEmpty(Optional<TextMessage> activeMqResult) {
-        assertTrue("No message found on MQ Queue " + OUTPUT_AMQ_QUEUE, activeMqResult.isPresent());
+        assertTrue("No message found on MQ Queue " + ACTIVE_MQ_OUTGOING_QUEUE, activeMqResult.isPresent());
     }
 
     private void assertPayload(String payload) {
@@ -128,4 +156,5 @@ class IsolatedEnvironment implements TestEnvironment {
                 + "</switchServiceModificationInstruction>"
                 ;
     }
+
 }
