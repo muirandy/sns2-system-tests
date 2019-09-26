@@ -18,7 +18,7 @@ payload='{
 payload+=$mqUrl
 payload+='",
                 "activemq.queue": "HaloToKnitware",
-                "topics": "kafka-topic",
+                "topics": "switch.modification.instructions",
                 "kafka.bootstrap.servers": "'
 payload+=$kafkaBroker
 payload+='"

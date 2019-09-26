@@ -9,7 +9,7 @@ curl -X POST \
                 "connector.class": "com.aimyourtechnology.kafka.connect.activemq.connector.ActiveMqSinkConnector",
                 "activemq.endpoint": "tcp://localhost:61616",
                 "activemq.queue": "target-mq-queue",
-                "topics": "kafka-topic",
+                "topics": "SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID",
                 "kafka.bootstrap.servers": "broker:29092",
             }
   }'
