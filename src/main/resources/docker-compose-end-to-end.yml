@@ -9,7 +9,7 @@ services:
       - "8161:8161"
 
   xmlConverter:
-    image: quarkus/quarkus-kafka-streams-xml-json-converter:latest
+    image: aytl/kafka-streams-xml-json-converter:0.1
     hostname: xmlconverter
     depends_on:
       - broker
