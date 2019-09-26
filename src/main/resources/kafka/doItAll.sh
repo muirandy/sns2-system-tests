@@ -30,7 +30,7 @@ docker exec $ksqlCliContainer /usr/share/ksql-scripts/enhanceVoip.sh
 
 # Connectors for AMQ
 ./src/main/resources/kafka-connect/createActiveMqSourceConnector.sh $kafkaBroker $connectServer $mqUrl
-./src/main/resources/kafka-connect/createActiveMqSinkConnector.sh $kafkaBroker $connectServer $mqUrl
+./src/main/resources/kafka-connect/createConfluentActiveMqSinkConnector.sh $kafkaBroker $connectServer $mqUrl
 
 # KSQL to ingest AMQ
 docker exec $ksqlCliContainer /usr/share/ksql-scripts/activeMq.sh
