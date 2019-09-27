@@ -25,6 +25,12 @@ payload+='",
 payload+=${kafkaBroker}
 payload+='",
                 "confluent.topic.replication.factor": 1,
+                "value.converter": "io.confluent.connect.avro.AvroConverter",
+                "value.converter.schema.registry.url": "http://schema-registry:8081",
+                "key.converter": "io.confluent.connect.avro.AvroConverter",
+                "key.converter.schema.registry.url": "http://schema-registry:8081",
+                "schema.registry.url": "http://schema-registry:8081",
+                "confluent.schema.registry.url": "http://schema-registry:8081",
                 "transforms": "Rename",
                 "transforms.Rename.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
                 "transforms.Rename.renames": "properties:jmsProperties"
