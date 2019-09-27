@@ -69,7 +69,3 @@ jmsProperties STRUCT <
   >
 >)
 WITH (KAFKA_TOPIC='incoming.activemq', VALUE_FORMAT='JSON');
-
-
-
-
