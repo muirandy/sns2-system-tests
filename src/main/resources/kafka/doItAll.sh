@@ -35,6 +35,9 @@ docker exec $ksqlCliContainer /usr/share/ksql-scripts/enhanceVoip.sh
 # KSQL to ingest AMQ
 docker exec $ksqlCliContainer /usr/share/ksql-scripts/activeMq.sh
 
+# XSLT for Knitware formatting
+./src/main/resources/kafka/xslt.sh $kafkaBroker
+
 # Audit
 docker exec $ksqlCliContainer /usr/share/ksql-scripts/auditing.sh
 

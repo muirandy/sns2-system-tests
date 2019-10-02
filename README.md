@@ -105,6 +105,11 @@ docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --p
 docker exec -it broker kafka-console-producer --broker-list broker:9092 --topic INCOMING_OP_MSGS
 ```
 
+## Write to XSLT topic:
+```
+docker exec -it <containerId> kafka-console-producer --broker-list broker:9092 --topic XSLT --property "parse.key=true" --property "key.separator=:"
+```
+
 ## Reset topic(s) for a specific app:
 ```
 docker exec -it broker kafka-streams-application-reset --application-id sns-modify-enricher --bootstrap-servers broker:9092 --input-topics services,RAW_VOIP_INSTRUCTIONS

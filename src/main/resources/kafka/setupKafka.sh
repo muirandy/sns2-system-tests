@@ -15,6 +15,8 @@ docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:21
 docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic voip-switch-services
 docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic MODIFY_VOICE_FEATURE_MSGS
 docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic RAW_VOIP_INSTRUCTIONS
+docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic XSLT
+docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID
 docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic AUDIT
 docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic KNITWARE_ERRORS_XML
 docker exec $kafkaBrokerContainer kafka-topics --create --zookeeper zookeeper:2181 --replication-factor 1 --partitions 4 --topic KNITWARE_ERRORS

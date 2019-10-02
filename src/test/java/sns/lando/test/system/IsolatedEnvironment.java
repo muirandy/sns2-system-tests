@@ -13,6 +13,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.String.format;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -24,10 +25,12 @@ class IsolatedEnvironment implements TestEnvironment {
     private String directoryNumber = "011" + new Random().nextInt();
     private Long serviceId;
     private Long switchServiceId;
+    private int orderId;
 
-    IsolatedEnvironment(Long serviceId, Long switchServiceId) {
+    IsolatedEnvironment(Long serviceId, Long switchServiceId, int orderId) {
         this.serviceId = serviceId;
         this.switchServiceId = switchServiceId;
+        this.orderId = orderId;
     }
 
     @Override
@@ -146,14 +149,13 @@ class IsolatedEnvironment implements TestEnvironment {
     }
 
     private String expectedPayload() {
-        return "\"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<switchServiceModificationInstruction switchServiceId=\"16\" netstreamCorrelationId=\"$orderId\">"
+        return format("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<switchServiceModificationInstruction switchServiceId=\"%s\" netstreamCorrelationId=\"%s\">"
                 + "<features>"
-                + "<callerDisplay active=\"true\"/>"
-                + "<ringBack active=\"true\"/>"
-                + "<chooseToRefuse active=\"true\"/>"
+                + "<CallWaiting active=\"true\"/>"
+                + "<ThreeWayCalling active=\"true\"/>"
                 + "</features>"
-                + "</switchServiceModificationInstruction>"
+                + "</switchServiceModificationInstruction>", switchServiceId, orderId)
                 ;
     }
 

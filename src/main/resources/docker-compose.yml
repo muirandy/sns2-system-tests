@@ -243,8 +243,6 @@ services:
       GRAFANA_HOST: grafana
     depends_on:
       - elasticsearch
-#    volumes:
-#      - $PWD/ksql/ksql-clickstream-demo/demo:/scripts
 
   zipkin:
     image: openzipkin/zipkin:2.12.6

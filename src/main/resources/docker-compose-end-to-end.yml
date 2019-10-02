@@ -9,7 +9,7 @@ services:
       - "8161:8161"
 
   xmlConverter:
-    image: aytl/kafka-streams-xml-json-converter:0.1
+    image: aytl/kafka-streams-xml-json-converter:0.2
     hostname: xmlconverter
     depends_on:
       - broker
@@ -23,6 +23,52 @@ services:
       APP_NAME: "activeMqXmlToJson"
       MODE: "mqConnector"
     command: dockerize -wait http://rest-proxy:8082/topics/INCOMING_OP_MSGS -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
+
+  knitwareXmlConverter:
+    image: aytl/kafka-streams-xml-json-converter:0.2
+    hostname: xmlconverter
+    depends_on:
+      - broker
+    environment:
+      kafka-streams.allow.auto.create.topics: "false"
+      kafka-streams.request.timeout.ms: 180000
+      KAFKA_BROKER_SERVER: broker
+      KAFKA_BROKER_PORT: 29092
+      INPUT_KAFKA_TOPIC: "SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID"
+      OUTPUT_KAFKA_TOPIC: "XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID"
+      APP_NAME: "modifyVoipJsonToXml"
+      MODE: "jsonToXml"
+      XML_OUTER_NODE: "modifyVoiceFeatures"
+    command: dockerize -wait http://rest-proxy:8082/topics/SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
+
+  knitwareXmlTransformer:
+    image: aytl/xslt-kafka-streams-jvm:0.1
+    hostname: knitwareXmlTransformer
+    depends_on:
+      - broker
+    environment:
+      KAFKA_BROKER_SERVER: broker
+      KAFKA_BROKER_PORT: 29092
+      XSLT_KAFKA_TOPIC: "XSLT"
+      INPUT_KAFKA_TOPIC: "XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID"
+      OUTPUT_KAFKA_TOPIC: "switch.modification.instructions"
+      XSLT_NAME: "cujoToKnitware.xslt"
+      APP_NAME: "knitwareXmlTransformer"
+    command: dockerize -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/switch.modification.instructions -wait http://rest-proxy:8082/topics/XSLT -timeout 240s java -jar /deployments/app.jar -Dquarkus.http.host=0.0.0.0
+
+
+#  knitwareAdapter:
+#    image: sns-knitware-converter:0.1.4
+#    hostname: knitwareAdapter
+#    depends_on:
+#      - broker
+#    environment:
+#      KAFKA_BROKER_SERVER: broker
+#      KAFKA_BROKER_PORT: 29092
+#      INPUT_TOPIC: SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID
+#      OUTPUT_TOPIC: switch.modification.instructions
+#    command: dockerize -wait http://rest-proxy:8082/topics/SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -timeout 240s
+
 networks:
   default:
     external:

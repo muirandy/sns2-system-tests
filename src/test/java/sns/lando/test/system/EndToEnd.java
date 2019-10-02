@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EndToEnd {
-    protected static final String KAFKA_BROKER_DOCKER_IMAGE_NAME = "confluentinc/cp-enterprise-kafka:5.3.0";
+    private static final String KAFKA_BROKER_DOCKER_IMAGE_NAME = "confluentinc/cp-enterprise-kafka:5.3.0";
 
     private static final File dockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose.yml").getFile());
     private static final File endToEndDockerComposeFile = new File(EndToEnd.class.getClassLoader().getResource("docker-compose-end-to-end.yml").getFile());
@@ -36,7 +36,7 @@ public class EndToEnd {
 
     @Before
     public void setup() {
-        testEnvironment = new IsolatedEnvironment(serviceId, switchServiceId);
+        testEnvironment = new IsolatedEnvironment(serviceId, switchServiceId, orderId);
 
         if (firstRun)
             doItAll();
