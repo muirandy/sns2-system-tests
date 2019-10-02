@@ -53,6 +53,11 @@ Add the following entries to your hosts file:
 127.0.0.1	zipkin
 ```
 
+## Create the "faith" network required by docker-compose
+```
+docker network create faith
+```
+
 ## Run the End to End System test
 ### Ensure you've got all the docker images locally:
 ```
