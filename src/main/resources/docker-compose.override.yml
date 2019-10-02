@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+  zookeeper:
+    hostname: zookeeper
+    container_name: zookeeper
+
+  broker:
+    hostname: broker
+    container_name: broker
+
+  schema-registry:
+    hostname: schema-registry
+    container_name: schema-registry
+
+  connect:
+    hostname: connect
+    container_name: connect
+
+  control-center:
+    hostname: control-center
+    container_name: control-center
+
+  ksql-server:
+    hostname: ksql-server
+    container_name: ksql-server
+
+  ksql-cli:
+    container_name: ksql-cli
+
+  rest-proxy:
+    hostname: rest-proxy
+    container_name: rest-proxy
+
+  elasticsearch:
+    hostname: elasticsearch
+    container_name: elasticsearch
+
+  kibana:
+    hostname: kibana
+    container_name: kibana
+
+  grafana:
+    hostname: grafana
+    container_name: grafana
+
+  zipkin:
+    hostname: zipkin
+    container_name: zipkin
+

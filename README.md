@@ -53,25 +53,37 @@ Add the following entries to your hosts file:
 127.0.0.1	zipkin
 ```
 
-## Start it all up
+## Run the End to End System test
+### Ensure you've got all the docker images locally:
 ```
-docker-compose up
+docker-compose --file src/main/resources/docker-compose.yml --file src/main/resources/docker-compose-end-to-end.yml pull
+```
+Run `EndToEnd.java`. Watch as the containers are started, system is built (KSQL, Kafka Connect etc) and a message sent in.
+The response should be asserted and the test should be green.
+
+
+
+## Start it all up 
+```
+docker-compose --file src/main/resources/docker-compose.yml --file src/main/resources/docker-compose-end-to-end.yml pull
+docker-compose --file src/main/resources/docker-compose.yml --file src/main/resources/docker-compose.override.yml --file src/main/resources/docker-compose-end-to-end.yml up
 ```
 Once the brokers have calmed down after starting (ie logs are a bit stable!), run this script:
 ```
-./doItall.sh
+src/main/resources/kafka/doItall.sh
 ```
+Your system should now be fully built and operational! Try writing messages in the same way as 
+the EndToEnd test!
 
-## Run the microservices
-Follow the instructions on these projects:
+## A note on the microservices
+Different approaches were taken at different times during development of this system. 
+The following microservices are used as part of the above docker-compose: 
 [Generic XML->JSON Converter](https://github.com/muirandy/sns-incoming-operator-messages-converter)
+[XSLT Transformer](https://github.com/muirandy/xsltKafkaStreamsQuarkus)
+
+The following are not used at present, but were at earlier points in time of the development:
 [Enrich with ServiceId](https://github.com/muirandy/sns-modify-enricher)
 [Convert to Knitware XML](https://github.com/muirandy/sns-knitware-converter)
-
-## Run the System test
-In this project, run ModifyFeatureSpec. It should go green!
-By inspecting the projects, you should be able to tell what topics are involved.
-The system test will show you the start and end points.
 
 
 # Useful Commands for Kafka
