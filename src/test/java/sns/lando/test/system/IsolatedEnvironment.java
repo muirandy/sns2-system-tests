@@ -17,7 +17,7 @@ import static java.lang.String.format;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-class IsolatedEnvironment implements TestEnvironment {
+class IsolatedEnvironment extends YatspecEnvironment implements TestEnvironment {
     private static final String ACTIVE_MQ_INCOMING_QUEUE = "ColliderToCujo";
     private static final String ACTIVE_MQ_OUTGOING_QUEUE = "HaloToKnitware";
     private static final String KAFKA_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
@@ -27,7 +27,8 @@ class IsolatedEnvironment implements TestEnvironment {
     private Long switchServiceId;
     private int orderId;
 
-    IsolatedEnvironment(Long serviceId, Long switchServiceId, int orderId) {
+    IsolatedEnvironment(LivingDocumentation logger, Long serviceId, Long switchServiceId, int orderId) {
+        super(logger);
         this.serviceId = serviceId;
         this.switchServiceId = switchServiceId;
         this.orderId = orderId;
@@ -41,6 +42,7 @@ class IsolatedEnvironment implements TestEnvironment {
 
     private void writeDirectlyToServiceTopic() {
         sendMessageToKafkaTopic("services", "" + serviceId, createServicePayload());
+        livingDocumentation.logGiven("Existing Service Id: ", serviceId);
     }
 
     private void sendMessageToKafkaTopic(String topic, String key, String value) {
@@ -84,6 +86,7 @@ class IsolatedEnvironment implements TestEnvironment {
 
     private void writeDirectlyToSwitchServiceTopic() {
         sendMessageToKafkaTopic("voip-switch-services", "" + serviceId, createSwitchServicePayload());
+        livingDocumentation.logGiven("Existing Switch Service Id: ", switchServiceId);
     }
 
     private String createSwitchServicePayload() {
@@ -97,7 +100,9 @@ class IsolatedEnvironment implements TestEnvironment {
     public void writeMessageOntoActiveMq(String traceyId, int orderId) {
         ActiveMqProducer activeMqProducer = new ActiveMqProducer(getActiveMqExternalEndpoint(), ACTIVE_MQ_INCOMING_QUEUE);
         activeMqProducer.start();
-        activeMqProducer.write(buildMqPayload(orderId), traceyId, orderId);
+        String payload = buildMqPayload(orderId);
+        activeMqProducer.write(payload, traceyId, orderId);
+        livingDocumentation.logWhen("Request from Outside to MQ_Queue", payload);
     }
 
     private String getActiveMqExternalEndpoint() {
@@ -131,7 +136,9 @@ class IsolatedEnvironment implements TestEnvironment {
         failIfEmpty(activeMqResult);
         TextMessage textMessage = activeMqResult.get();
         try {
-            assertPayload(textMessage.getText());
+            String payload = textMessage.getText();
+            livingDocumentation.logThen("Response from MQ_Queue to Outside", payload);
+            assertPayload(payload);
         } catch (JMSException e) {
             e.printStackTrace();
             fail("Unexpected Exception:" + e);
@@ -158,5 +165,4 @@ class IsolatedEnvironment implements TestEnvironment {
                 + "</switchServiceModificationInstruction>", switchServiceId, orderId)
                 ;
     }
-
 }
