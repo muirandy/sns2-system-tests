@@ -15,9 +15,27 @@ https://www.confluent.io/apache-kafka-stream-processing-book-bundle
 ## Apache Kafka Quickstart:
 https://kafka.apache.org/quickstart
 
+# tl;dr
+* Make sure you have Docker installed, with around 5GB of memory - more wouldn't hurt.
+* You've already cloned this project - open it in an IDE as a maven project (make sure you're set up for Java 8).
+* Build the maven project:
+```
+./mvnw clean package
+```
+* Create a "faith" docker network:
+```
+docker network create faith
+```
+* Pull the docker images:
+```
+docker-compose --file src/main/resources/docker-compose.yml --file src/main/resources/docker-compose-end-to-end.yml pull
+```
+* Run the End to End test:
+In the IDE, run `EndToEnd.java`.
+Note: The first time this is run it may fail. It seems to take docker some time to fire up the containers.
 
 
-# Instructions
+# Long Instructions
 The first thing you need is an installation of Apache Kafka. We are using the Confluent platform here.
 Its by far easiest to run it from docker-compose. That's what we do here!
 
