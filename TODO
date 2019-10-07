@@ -1,0 +1,8 @@
+Things we could add:
+
+* Debezium
+* OpenTracing with Jaeger/Zipkin & Quarkus
+* Use Avro on topics (in progress)
+* Living Documentation
+* Neo4J
+* Splunk
