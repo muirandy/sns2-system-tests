@@ -2,4 +2,5 @@
 *.iml
 target/
 project/target
+.mvn/wrapper/*.jar
 structurizr-*.json
