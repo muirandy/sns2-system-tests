@@ -6,3 +6,5 @@ Things we could add:
 * Living Documentation
 * Neo4J
 * Splunk
+* Get Quarkus XSLT Transformer onto native image
+* Shrink XML->JSON image size (minideb?)
