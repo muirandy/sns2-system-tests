@@ -20,6 +20,11 @@ RUN mkdir -p /opt/kafka-connect/jars
 RUN curl -k -S "http://central.maven.org/maven2/no/sysco/middleware/kafka/kafka-interceptor-zipkin/0.4.2/kafka-interceptor-zipkin-0.4.2.jar" -o /opt/kafka-connect/jars/kafka-interceptor-zipkin-0.4.2.jar
 RUN ln -s /opt/kafka-connect/jars/kafka-interceptor-zipkin-0.4.2.jar /usr/share/java/monitoring-interceptors/
 
+#Splunk
+#RUN curl -k -S "https://github.com/splunk/kafka-connect-splunk/releases/download/v1.1.1/splunk-kafka-connect-v1.1.1.jar" -o /opt/kafka-connect/jars/splunk-kafka-connect-v1.1.1.jar
+#RUN mkdir -p /usr/share/java/kafka-connect-splunk-sink
+#RUN ln -s /opt/kafka-connect/jars/splunk-kafka-connect-v1.1.1.jar /usr/share/java/kafka-connect-splunk-sink
+
 #Oracle DB Driver
 #RUN curl -k -S "http://repo.sns.sky.com:8081/artifactory/libs-releases/com/oracle/ojdbc6/11.2.0.4/ojdbc6-11.2.0.4.jar" -o /opt/kafka-connect/jars/ojdbc6-11.2.0.4.jar
 #RUN ln -s /opt/kafka-connect/jars/ojdbc6-11.2.0.4.jar /usr/share/java/kafka-connect-jdbc/
