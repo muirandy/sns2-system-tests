@@ -15,7 +15,7 @@ echo "Loading Grafana ClickStream Dashboard"
 RESP="$(curl -s -X "POST" "http://$GRAFANA_HOST:3000/api/dashboards/db" \
 	    -H "Content-Type: application/json" \
 	     --user admin:admin \
-	     --data-binary @grafanaDashboard.json)"
+	     --data-binary @./src/main/resources/kafka/grafanaDashboard.json)"
 
 #echo $RESP
 echo ""

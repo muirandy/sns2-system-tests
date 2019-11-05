@@ -8,11 +8,12 @@ if [[ -z "${KIBANA_HOST}" ]]; then
 fi
 
 echo "Loading Kibana ClickStream Dashboard"
+echo "http://$KIBANA_HOST:5601/api/kibana/dashboards/import"
 
 curl -s -X "POST" "http://$KIBANA_HOST:5601/api/kibana/dashboards/import" \
         -H "kbn-xsrf: true" \
 	    -H "Content-Type: application/json" \
-	     --data-binary @kibanaDashboard.json
+	     --data-binary @./src/main/resources/kafka/kibanaDashboard.json
 
 echo ""
 echo ""
