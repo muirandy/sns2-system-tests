@@ -5,7 +5,7 @@ kafkaBroker=${2:-broker:29092}
 kafkaBrokerContainer=${3:-broker}
 ksqlCliContainer=${4:-ksql-cli}
 connectServer=${5:-localhost:8083/connectors}
-mqUrl=${6:-tcp://localhost:61616}
+mqUrl=${6:-tcp://activemq:61616}
 elasticSearchInternalNetworkUrl=${7:-elasticsearch:9200}
 
 echo " --- doItAll.sh --- "

@@ -2,7 +2,7 @@
 
 kafkaBroker=${1:-broker:29092}
 connectServer=${2:-localhost:8083/connectors}
-mqUrl=${3:-tcp://localhost:61616}
+mqUrl=${3:-tcp://activemq:61616}
 
 echo " --- createActiveMqSinkConnector.sh --- "
 
