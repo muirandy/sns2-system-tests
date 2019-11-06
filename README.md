@@ -132,7 +132,9 @@ docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --p
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic enriched.modification.instructions.with.dn --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic AUDIT --from-beginning
+docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic switch.modification.instructions --from-beginning
+docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic XSLT --from-beginning
 ```
 
 ## Write directly to a topic:
