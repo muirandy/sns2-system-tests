@@ -232,9 +232,9 @@ services:
   #      - broker
 
   jaeger:
-    image: jaeger/fat-jaeger:latest
+    image: jaegertracing/all-in-one:1.8
     hostname: jaeger
-    command: ["--collector.zipkin.http-port=9411", "--sampling.strategies-file=/etc/jaeger/samplingStrategy.json"]
+    command: ["--collector.zipkin.http-port=9411"]
     environment:
       JAEGER_SAMPLER_TYPE: const
       JAEGER_SAMPLER_PARAM: 1
