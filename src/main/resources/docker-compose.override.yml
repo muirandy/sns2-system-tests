@@ -44,7 +44,10 @@ services:
     hostname: grafana
     container_name: grafana
 
-  zipkin:
-    hostname: zipkin
-    container_name: zipkin
+#  zipkin:
+#    hostname: zipkin
+#    container_name: zipkin
 
+  jaeger:
+    hostname: jaeger
+    container_name: jaeger
