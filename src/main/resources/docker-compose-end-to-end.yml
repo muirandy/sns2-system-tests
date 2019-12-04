@@ -9,36 +9,38 @@ services:
       - "8161:8161"
 
   xmlConverter:
-    image: aytl/kafka-streams-xml-json-converter:0.2
+    image: aytl/kafka-streams-xml-json-converter:0.3
     hostname: xmlconverter
     depends_on:
       - broker
+      - jaeger
     environment:
       kafka-streams.allow.auto.create.topics: "false"
       kafka-streams.request.timeout.ms: 180000
-      KAFKA_BROKER_SERVER: broker
-      KAFKA_BROKER_PORT: 29092
+      KAFKA_BROKERS: "broker:29092"
       INPUT_KAFKA_TOPIC: "INCOMING_OP_MSGS"
       OUTPUT_KAFKA_TOPIC: "modify.op.msgs"
       APP_NAME: "activeMqXmlToJson"
       MODE: "mqConnector"
+      ZIPKIN_ENDPOINT: "http://jaeger:9411/api/v2/spans"
     command: dockerize -wait http://rest-proxy:8082/topics/INCOMING_OP_MSGS -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
 
   knitwareXmlConverter:
-    image: aytl/kafka-streams-xml-json-converter:0.2
+    image: aytl/kafka-streams-xml-json-converter:0.3
     hostname: xmlconverter
     depends_on:
       - broker
+      - jaeger
     environment:
       kafka-streams.allow.auto.create.topics: "false"
       kafka-streams.request.timeout.ms: 180000
-      KAFKA_BROKER_SERVER: broker
-      KAFKA_BROKER_PORT: 29092
+      KAFKA_BROKERS: "broker:29092"
       INPUT_KAFKA_TOPIC: "SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID"
       OUTPUT_KAFKA_TOPIC: "XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID"
       APP_NAME: "modifyVoipJsonToXml"
       MODE: "jsonToXml"
       XML_OUTER_NODE: "modifyVoiceFeatures"
+      ZIPKIN_ENDPOINT: "http://jaeger:9411/api/v2/spans"
     command: dockerize -wait http://rest-proxy:8082/topics/SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
 
   knitwareXmlTransformer:
