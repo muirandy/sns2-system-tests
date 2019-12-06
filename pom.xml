@@ -135,11 +135,16 @@
             <version>1.1</version>
             <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>net.sourceforge.plantuml</groupId>-->
+<!--            <artifactId>plantuml</artifactId>-->
+<!--            <version>8048</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>net.sourceforge.plantuml</groupId>
-            <artifactId>plantuml</artifactId>
-            <version>8048</version>
-            <scope>test</scope>
+            <groupId>com.github.muirandy</groupId>
+            <artifactId>component-diagram-generator</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <repositories>
