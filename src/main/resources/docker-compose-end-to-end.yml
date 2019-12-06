@@ -44,18 +44,20 @@ services:
     command: dockerize -wait http://rest-proxy:8082/topics/SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
 
   knitwareXmlTransformer:
-    image: aytl/xslt-kafka-streams-jvm:0.1
+    image: aytl/xslt-kafka-streams-jvm:0.2
     hostname: knitwareXmlTransformer
     depends_on:
       - broker
     environment:
       KAFKA_BROKER_SERVER: broker
       KAFKA_BROKER_PORT: 29092
+      KAFKA_BROKERS: "broker:29092"
       XSLT_KAFKA_TOPIC: "XSLT"
       INPUT_KAFKA_TOPIC: "XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID"
       OUTPUT_KAFKA_TOPIC: "switch.modification.instructions"
       XSLT_NAME: "cujoToKnitware.xslt"
       APP_NAME: "knitwareXmlTransformer"
+      ZIPKIN_ENDPOINT: "http://jaeger:9411/api/v2/spans"
     command: dockerize -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/switch.modification.instructions -wait http://rest-proxy:8082/topics/XSLT -timeout 240s java -jar /deployments/app.jar -Dquarkus.http.host=0.0.0.0
 
 
