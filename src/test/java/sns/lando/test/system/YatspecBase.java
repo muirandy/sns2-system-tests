@@ -52,7 +52,7 @@ public class YatspecBase extends TestState implements LivingDocumentation, WithC
 
     @Before
     public void resetComponentDiagram() {
-        componentDiagramApp = new ComponentDiagramApp(new String[]{"http://jaeger:16686"});
+        componentDiagramApp = new ComponentDiagramApp(new String[]{"http://jaeger:16686", "localhost:9092"});
         componentDiagramApp.initialise();
     }
 
