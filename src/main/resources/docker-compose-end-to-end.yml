@@ -23,7 +23,7 @@ services:
       APP_NAME: "activeMqXmlToJson"
       MODE: "mqConnector"
       ZIPKIN_ENDPOINT: "http://jaeger:9411/api/v2/spans"
-    command: dockerize -wait http://rest-proxy:8082/topics/INCOMING_OP_MSGS -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
+    command: dockerize -wait http://rest-proxy:8082/topics/INCOMING_OP_MSGS -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0 -Xmx48m
 
   knitwareXmlConverter:
     image: aytl/kafka-streams-xml-json-converter:0.3
@@ -41,7 +41,7 @@ services:
       MODE: "jsonToXml"
       XML_OUTER_NODE: "modifyVoiceFeatures"
       ZIPKIN_ENDPOINT: "http://jaeger:9411/api/v2/spans"
-    command: dockerize -wait http://rest-proxy:8082/topics/SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0
+    command: dockerize -wait http://rest-proxy:8082/topics/SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -timeout 240s /work/application -Dquarkus.http.host=0.0.0.0 -Xmx48m
 
   knitwareXmlTransformer:
     image: aytl/xslt-kafka-streams-jvm:0.2
@@ -58,7 +58,7 @@ services:
       XSLT_NAME: "cujoToKnitware.xslt"
       APP_NAME: "knitwareXmlTransformer"
       ZIPKIN_ENDPOINT: "http://jaeger:9411/api/v2/spans"
-    command: dockerize -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/switch.modification.instructions -wait http://rest-proxy:8082/topics/XSLT -timeout 240s java -jar /deployments/app.jar -Dquarkus.http.host=0.0.0.0
+    command: dockerize -wait http://rest-proxy:8082/topics/XML_SINK_MODIFY_VOIP_INSTRUCTIONS_WITH_SWITCH_ID -wait http://rest-proxy:8082/topics/switch.modification.instructions -wait http://rest-proxy:8082/topics/XSLT -timeout 240s java -jar /deployments/app.jar -Dquarkus.http.host=0.0.0.0 -Xmx48m
 
 
 #  knitwareAdapter:
