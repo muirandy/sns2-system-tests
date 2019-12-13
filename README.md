@@ -96,7 +96,7 @@ Once the brokers have calmed down after starting (ie logs are a bit stable!), ru
 src/main/resources/kafka/doItall.sh
 ```
 Your system should now be fully built and operational! Try writing messages in the same way as 
-the EndToEnd test!
+the EndToEnd test - run the `BulMessageGeneratorNoDb` class.
 
 ## A note on the microservices
 Different approaches were taken at different times during development of this system. 
@@ -136,10 +136,12 @@ docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --p
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic switch.modification.instructions --from-beginning
 docker exec -it broker kafka-console-consumer --bootstrap-server broker:9092 --property print.key=true --topic XSLT --from-beginning
 ```
+
 ##View the headers in topic:
 ```
 docker run -it --rm --network=faith edenhill/kafkacat:1.5.0 kafkacat -b broker:29092 -o beginning -t modify.op.msgs -f 'Headers: %h: Message value: %s\n'
 ```
+
 ## Write directly to a topic:
 ```
 docker exec -it broker kafka-console-producer --broker-list broker:9092 --topic INCOMING_OP_MSGS
