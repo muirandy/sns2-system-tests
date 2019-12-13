@@ -346,7 +346,11 @@ curl -X DELETE "localhost:9200/audit?pretty"
 curl -X DELETE "localhost:9200/_template/template_1"
 ```
 
-
+# Prometheus & cAdvisor
+```
+http://localhost:9090/
+http://localhost:8080/
+```
 
 # Links:
 Create a new scala-maven project: https://www.ivankrizsan.se/2016/03/27/creating-a-scala-project-with-maven-dependency-management-for-gatling-testing-in-intellij-idea/
