@@ -1,6 +1,7 @@
 FROM confluentinc/cp-kafka-connect:5.3.0
 
 RUN confluent-hub install --no-prompt confluentinc/kafka-connect-activemq-sink:1.1.1
+RUN confluent-hub install --no-prompt neo4j/kafka-connect-neo4j:1.0.2
 
 ENV CONNECT_PLUGIN_PATH="/usr/share/java,/usr/share/confluent-hub-components"
 
