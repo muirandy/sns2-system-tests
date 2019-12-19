@@ -1,6 +1,7 @@
 .idea/
 *.iml
 target/
+reports/
 project/target
 .mvn/wrapper/*.jar
 structurizr-*.json

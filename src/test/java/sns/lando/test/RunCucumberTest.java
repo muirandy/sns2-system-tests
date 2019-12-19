@@ -5,7 +5,12 @@ import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
-@CucumberOptions(plugin = "pretty", features = "src/test/resources/cucumber")
-public class RunCucumberTest
-{
+@CucumberOptions(plugin = { "de.monochromata.cucumber.report.PrettyReports:reports" }, features = "src/test/resources/cucumber")
+//        @CucumberOptions(plugin = {"pretty",
+//                "html:reports/cucumber",
+//                "json:reports/cucumber.json",
+//                "junit:reports/cucumber.xml"},
+//        snippets = CAMELCASE,
+//        features = "src/test/resources/cucumber")
+public class RunCucumberTest {
 }

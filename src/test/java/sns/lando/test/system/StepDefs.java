@@ -58,11 +58,6 @@ public class StepDefs extends CucumberDocumentationBase {
     //        }, Optional.of(scenario).filter(Scenario::isFailed).map(__ -> new RuntimeException()));
     //    }
 
-    @Given("an existing VOIP Service")
-    public void an_existing_VOIP_Service() {
-        testEnvironment.givenExistingVoipService();
-    }
-
     private void doItAll() {
         String zookeeperEndpoint = getZookeeperEndpoint();
         String kafkaBrokerEndpoint = getInternalNetworkKafkaBrokerEndpoint();
@@ -148,13 +143,18 @@ public class StepDefs extends CucumberDocumentationBase {
         cmdStdOut.close();
     }
 
+    @Given("an existing VOIP Service")
+    public void anExistingVOIPService() {
+        testEnvironment.givenExistingVoipService();
+    }
+
     @When("the operator issues a Modify Voice Features Request")
-    public void the_operator_issues_a_Modify_Voice_Features_Request() {
+    public void theOperatorIssuesAModifyVoiceFeaturesRequest() {
         testEnvironment.writeMessageOntoActiveMq(traceyId, orderId);
     }
 
     @Then("the VOIP features are changed on the Telephony Switch")
-    public void the_VOIP_features_are_changed_on_the_Telephony_Switch() {
+    public void theVoipFeaturesAreChangedOnTheTelephonySwitch() {
         testEnvironment.assertFeaturesChangedOnSwitch();
     }
 }
